@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#087f41" />
+  <title>Guyana Business Plan Builder</title>
+  <style>
+    :root{
+      --green:#087f41; --green2:#0ca157; --dark:#102033; --muted:#667085;
+      --yellow:#ffd53d; --bg:#f5f7f6; --card:#ffffff; --line:#e4e9e6;
+      --shadow:0 10px 30px rgba(18,55,37,.10); --radius:22px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;background:#eef2ef;color:var(--dark);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:86px;box-shadow:0 0 32px rgba(0,0,0,.08)}
+    .topbar{height:54px;background:linear-gradient(135deg,#076f39,#0da258);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:-.4px}.brandmark{width:32px;height:32px;border-radius:9px;background:white;display:grid;place-items:center;color:var(--green);font-weight:1000}.flag{font-size:20px}.mini{font-size:12px;opacity:.9}
+    .screen{display:none}.screen.active{display:block}
+    .hero{min-height:390px;padding:20px 18px 18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(155deg,rgba(5,111,56,.92),rgba(6,139,73,.82) 52%,rgba(251,198,27,.86));}
+    .hero:before{content:"";position:absolute;inset:0;opacity:.2;background-image:radial-gradient(circle at 86% 18%,#fff 0 3px,transparent 4px),linear-gradient(165deg,transparent 0 58%,rgba(255,255,255,.45) 59% 60%,transparent 61%);background-size:90px 90px,100% 100%}
+    .hero-art{position:absolute;right:-18px;bottom:28px;width:235px;height:240px;opacity:.98}
+    .sun{position:absolute;width:96px;height:96px;border-radius:50%;background:#ffe76a;right:16px;top:18px;filter:blur(.2px);opacity:.9}
+    .tower{position:absolute;right:92px;bottom:87px;width:46px;height:126px;background:linear-gradient(#fff,#e8f4ed);clip-path:polygon(40% 0,60% 0,66% 22%,82% 28%,72% 32%,72% 100%,28% 100%,28% 32%,18% 28%,34% 22%);box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+    .tower:after{content:"◷";position:absolute;color:#24543b;font-size:23px;top:38px;left:11px}
+    .produce{position:absolute;right:-5px;bottom:0;font-size:56px;letter-spacing:-14px;filter:drop-shadow(0 7px 5px rgba(0,0,0,.18))}
+    .hero h1{font-size:33px;line-height:.97;margin:74px 0 9px;max-width:300px;text-transform:uppercase;letter-spacing:-1.8px;text-shadow:0 2px 8px rgba(0,0,0,.15)}
+    .hero h1 span{color:var(--yellow)}
+    .hero p{max-width:310px;margin:0 0 19px;font-size:14px;font-weight:650;line-height:1.45}
+    .cta{border:0;border-radius:17px;padding:15px 18px;background:#fff;color:var(--green);font-weight:900;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:var(--shadow);width:min(100%,370px);position:relative;z-index:2}
+    .cta small{display:block;color:#607068;font-weight:600;margin-top:2px}.cta .arrow{font-size:28px}
+    .feature-strip{margin:-18px 12px 14px;background:white;border-radius:20px;position:relative;z-index:5;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(4,1fr);padding:14px 6px;gap:2px}
+    .feat{text-align:center;font-size:10.5px;color:#28352e;font-weight:750}.feat b{font-size:23px;display:block;margin-bottom:4px}.feat span{color:#7c8a82;font-weight:550}
+    .section{padding:6px 14px 14px}.section-head{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 11px}.section-head h2{font-size:20px;margin:0;letter-spacing:-.5px}.link{border:0;background:none;color:var(--green);font-weight:800}
+    .categories{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.category{position:relative;overflow:hidden;min-height:104px;border:0;border-radius:16px;color:white;text-align:left;padding:12px;background:linear-gradient(135deg,#31554a,#0f8e4b);box-shadow:0 6px 14px rgba(21,60,42,.12)}
+    .category:nth-child(2n){background:linear-gradient(135deg,#6a4b2d,#d88222)}.category:nth-child(3n){background:linear-gradient(135deg,#274c73,#4b8fc8)}.category:nth-child(4n){background:linear-gradient(135deg,#612f69,#c24aa0)}
+    .category .emo{position:absolute;right:8px;bottom:-9px;font-size:64px;opacity:.92;filter:drop-shadow(0 4px 5px rgba(0,0,0,.18))}.category strong{position:absolute;left:10px;bottom:10px;z-index:2;font-size:13px;max-width:110px}.category:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,rgba(0,0,0,.42))}
+    .local-banner{margin:3px 14px 16px;border-radius:18px;background:linear-gradient(90deg,#fff 0 75%,#f3c735);padding:13px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;box-shadow:var(--shadow);font-size:10px;text-align:center;font-weight:750}.local-banner b{font-size:19px;display:block}
+    .page{padding:18px 16px 20px}.page h1{font-size:29px;letter-spacing:-1px;margin:4px 0 7px}.sub{color:var(--muted);font-size:15px;line-height:1.45;margin:0 0 20px}
+    .chips{display:flex;gap:8px;overflow:auto;padding:3px 0 12px;scrollbar-width:none}.chip{white-space:nowrap;border:1px solid #bddbc9;background:#f1fbf5;color:#19713f;padding:10px 14px;border-radius:24px;font-weight:800}.chip.active{background:var(--green);color:white;border-color:var(--green)}
+    .field{margin:16px 0}.field label{font-weight:900;font-size:15px;display:block;margin:0 0 8px}.field label small{font-weight:650;color:#667085}.input{width:100%;border:1px solid #d7ded9;border-radius:17px;background:#fff;padding:14px 15px;color:#1b2a23;outline:none}.input:focus{border-color:#34a869;box-shadow:0 0 0 3px rgba(12,143,73,.08)}textarea.input{min-height:150px;resize:vertical;line-height:1.42}
+    .primary{width:100%;border:0;border-radius:17px;background:linear-gradient(135deg,#078541,#0aa15a);color:white;padding:16px;font-weight:950;font-size:17px;box-shadow:0 8px 16px rgba(4,126,62,.2)}.secondary{width:100%;border:1.5px solid var(--green);border-radius:17px;background:white;color:var(--green);padding:14px;font-weight:850;margin-top:9px}
+    .plan-wrap{padding:14px 11px 26px}.plan-title{background:white;border-radius:18px;padding:15px;box-shadow:var(--shadow);margin-bottom:10px}.plan-title .crumb{font-size:12px;color:var(--green);font-weight:900}.plan-title h1{font-size:26px;margin:7px 0 2px}.plan-title small{color:#667085}.plan-card{background:white;border:1px solid #e2e8e4;border-radius:15px;padding:14px;margin:9px 0;box-shadow:0 5px 12px rgba(0,0,0,.035)}.plan-card h3{margin:0 0 9px;font-size:16px}.plan-card p{font-size:13px;line-height:1.46;color:#34433a;margin:0 0 7px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.metric{background:#f5faf7;border-radius:12px;padding:10px}.metric span{display:block;color:#6b766f;font-size:10px}.metric b{font-size:15px;color:var(--green)}
+    .barrow{margin:9px 0}.barrow label{display:flex;justify-content:space-between;font-size:11px;font-weight:800}.bar{height:8px;border-radius:20px;background:#e7efe9;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#0c8a47,#f0c12e);border-radius:20px}
+    .monthlist{font-size:11px;line-height:1.55;color:#38453e;max-height:240px;overflow:auto;padding-right:4px}.swot{display:grid;grid-template-columns:1fr 1fr;gap:8px}.swot div{border-radius:12px;padding:10px;background:#f7faf8}.swot b{font-size:11px}.swot p{font-size:10.5px;margin-top:4px}
+    .unlock{background:linear-gradient(135deg,#057d3d,#0b9f57);color:#fff;border-radius:18px;padding:18px;margin-top:10px}.unlock h3{margin:0 0 7px}.unlock p{color:#eaf7ef;font-size:12px}.unlock .pay{width:100%;border:0;border-radius:12px;background:var(--yellow);color:#233027;padding:12px;font-weight:950;margin-top:8px}
+    .saved-empty{background:white;border:1px dashed #cbd7cf;border-radius:20px;padding:35px 24px;text-align:center;color:#667085}.saved-card{background:white;border-radius:16px;padding:14px;margin:9px 0;box-shadow:var(--shadow)}.saved-card h3{margin:0 0 5px}.saved-card small{color:#667085}.row{display:flex;gap:8px;margin-top:10px}.smallbtn{flex:1;border:1px solid #cbd8d0;background:#fff;border-radius:11px;padding:10px;color:#176d3d;font-weight:800}
+    .tips-grid{display:grid;gap:10px}.tip{background:white;border-radius:16px;padding:15px;border:1px solid #e1e7e3}.tip b{font-size:22px}.tip h3{margin:5px 0}.tip p{margin:0;color:#667085;font-size:13px;line-height:1.45}
+    .setting{background:white;border-radius:16px;margin:9px 0;padding:14px;display:flex;justify-content:space-between;gap:10px;align-items:center}.setting small{color:#667085;display:block;margin-top:2px}.badge{background:#eef9f2;color:#0a7d40;border-radius:20px;padding:6px 9px;font-weight:850;font-size:11px}
+    .bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:76px;background:rgba(255,255,255,.97);border-top:1px solid #e1e7e3;display:grid;grid-template-columns:repeat(5,1fr);z-index:40;padding-bottom:max(5px,env(safe-area-inset-bottom));backdrop-filter:blur(12px)}.nav{border:0;background:none;color:#667085;font-size:10px;font-weight:760;padding:7px 2px}.nav b{display:block;font-size:21px;margin-bottom:2px}.nav.active{color:var(--green)}
+    .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(15px);background:#15241c;color:#fff;padding:11px 14px;border-radius:12px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .modal{position:fixed;inset:0;background:rgba(7,20,12,.55);display:none;align-items:flex-end;z-index:60}.modal.show{display:flex}.sheet{background:white;width:min(520px,100%);margin:auto;border-radius:28px 28px 0 0;padding:20px 16px 28px;max-height:84vh;overflow:auto}.handle{width:60px;height:6px;background:#d3d9d5;border-radius:20px;margin:0 auto 16px}.price{font-size:38px;font-weight:1000;color:var(--green)}.disclaimer{font-size:11px;color:#7b8580;line-height:1.45}
+    @media(min-width:440px){.categories{grid-template-columns:repeat(3,1fr)}.category{min-height:112px}}
+    @media print{.topbar,.bottom,.unlock,.print-hide{display:none!important}.app{max-width:none;box-shadow:none;padding:0}.plan-card,.plan-title{box-shadow:none;break-inside:avoid}.screen{display:none!important}#planScreen{display:block!important}.plan-wrap{padding:0}.page{padding:0}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="brandmark">↗</div><div>GUYANA <span class="mini">BUSINESS PLAN</span></div></div>
+    <div class="flag">🇬🇾</div>
+  </header>
+
+  <main>
+    <section id="homeScreen" class="screen active">
+      <div class="hero">
+        <div class="sun"></div><div class="tower"></div><div class="produce">🍍🥬🍌🍅</div>
+        <h1>Turn your idea into a <span>professional business plan</span></h1>
+        <p>Fast • Easy • Detailed • Guyana focused. Build a polished plan from a few simple answers.</p>
+        <button class="cta" onclick="showCreate()"><div>📄 &nbsp; Create My Business Plan<small>Takes less than 2 minutes</small></div><div class="arrow">›</div></button>
+      </div>
+      <div class="feature-strip">
+        <div class="feat"><b>✅</b>Simple Questions<span>Tell us your idea</span></div>
+        <div class="feat"><b>📊</b>Detailed Plan<span>With breakdowns</span></div>
+        <div class="feat"><b>📄</b>Printable PDF<span>Ready to use</span></div>
+        <div class="feat"><b>💡</b>Business Tips<span>Guyana guidance</span></div>
+      </div>
+      <div class="section">
+        <div class="section-head"><h2>Choose Your Business Type</h2><button class="link" onclick="showCreate()">See all ›</button></div>
+        <div class="categories" id="categories"></div>
+      </div>
+      <div class="local-banner"><div><b>📈</b>Support Local Business</div><div><b>👥</b>Create Jobs in Guyana</div><div><b>🌱</b>Grow Our Economy</div></div>
+    </section>
+
+    <section id="createScreen" class="screen">
+      <div class="page">
+        <h1>Tell us about your business</h1>
+        <p class="sub">Just describe your idea. You do not need to know how to write a business plan.</p>
+        <div class="chips" id="chips"></div>
+        <div class="field"><label>Your business idea</label><textarea id="idea" class="input" placeholder="Example: I want to start a small catering business in Georgetown selling Guyanese lunches to offices and events."></textarea></div>
+        <div class="field"><label>Business name <small>(optional)</small></label><input id="businessName" class="input" placeholder="Leave blank if you do not have one yet" /></div>
+        <div class="field"><label>Approximate amount needed <small>(GYD, optional)</small></label><input id="amount" class="input" inputmode="numeric" placeholder="e.g. 1500000" /></div>
+        <button class="primary" onclick="generatePlan()">✨ Create My Business Plan</button>
+        <button class="secondary" onclick="go('home')">Not now</button>
+      </div>
+    </section>
+
+    <section id="planScreen" class="screen"><div class="plan-wrap" id="planContent"></div></section>
+
+    <section id="savedScreen" class="screen">
+      <div class="page"><h1>My Plans</h1><p class="sub">Plans are saved on this device so you can open or edit them later.</p><div id="savedList"></div></div>
+    </section>
+
+    <section id="paymentScreen" class="screen">
+      <div class="page"><h1>Payment</h1><p class="sub">Unlock printing and the full professional plan layout.</p>
+        <div class="plan-card"><h3>Professional Plan Unlock</h3><div class="price">GYD $500</div><p>One-time unlock on this device for the prototype. A live payment gateway can be connected before release.</p><button class="primary" onclick="openPayment()">Unlock Professional Plan</button></div>
+        <div class="plan-card"><h3>What is included</h3><p>Executive summary, opportunity analysis, market strategy, operations plan, funding breakdown, 12-month outlook, SWOT analysis, implementation plan, save/edit and print-to-PDF.</p></div>
+      </div>
+    </section>
+
+    <section id="tipsScreen" class="screen">
+      <div class="page"><h1>Business Tips</h1><p class="sub">Short, practical guidance for building a stronger plan in Guyana.</p><div class="tips-grid" id="tips"></div></div>
+    </section>
+
+    <section id="settingsScreen" class="screen">
+      <div class="page"><h1>Settings</h1><p class="sub">App preferences and prototype information.</p>
+        <div class="setting"><div><strong>Currency</strong><small>Financial figures use Guyanese dollars</small></div><span class="badge">GYD</span></div>
+        <div class="setting"><div><strong>Local storage</strong><small>Plans stay on this device</small></div><span class="badge">On</span></div>
+        <div class="setting"><div><strong>Professional unlock</strong><small id="unlockStatus">Not unlocked</small></div><span class="badge" id="unlockBadge">Locked</span></div>
+        <div class="setting"><div><strong>App version</strong><small>Prototype build</small></div><span class="badge">1.0.0</span></div>
+        <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning prototype and is not an official Government of Guyana service. Financial projections are illustrative planning estimates and should be reviewed before being used for lending, investment, tax, or legal decisions.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom">
+    <button class="nav active" data-nav="home" onclick="go('home')"><b>⌂</b>Home</button>
+    <button class="nav" data-nav="saved" onclick="go('saved')"><b>▤</b>My Plans</button>
+    <button class="nav" data-nav="payment" onclick="go('payment')"><b>▣</b>Payment</button>
+    <button class="nav" data-nav="tips" onclick="go('tips')"><b>💡</b>Tips</button>
+    <button class="nav" data-nav="settings" onclick="go('settings')"><b>⚙</b>Settings</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="paymentModal" onclick="if(event.target===this)closePayment()"><div class="sheet"><div class="handle"></div><h2>Unlock Professional Plan</h2><div class="price">GYD $500</div><p>For this prototype, the button below simulates a successful one-time purchase on this device.</p><button class="primary" onclick="demoUnlock()">Demo Unlock</button><button class="secondary" onclick="closePayment()">Cancel</button><p class="disclaimer">For production, replace the demo action with a verified payment provider and server-side receipt validation.</p></div></div>
+
+<script>
+const categories=[
+  ['Agriculture & Farming','🌾'],['Food & Catering','🍛'],['Retail & Trading','🛍️'],['Beauty & Wellness','💇🏽‍♀️'],['Construction & Building','🏗️'],['Transportation & Logistics','🚌'],['Tourism & Hospitality','🌴'],['Technology & Digital Services','💻'],['Fisheries & Marine','🎣'],['Manufacturing & Processing','⚙️'],['Professional Services','🧑🏽‍💼'],['Creative & Other Services','🎨']
+];
+const sectorPresets={
+ 'Agriculture & Farming':{margin:.31,growth:.055,customers:'households, wholesalers, restaurants, supermarkets and agro-processors'},
+ 'Food & Catering':{margin:.36,growth:.06,customers:'office workers, families, event organisers and walk-in customers'},
+ 'Retail & Trading':{margin:.25,growth:.05,customers:'local consumers, small businesses and repeat neighbourhood buyers'},
+ 'Beauty & Wellness':{margin:.43,growth:.055,customers:'working professionals, students, bridal clients and repeat personal-care customers'},
+ 'Construction & Building':{margin:.28,growth:.045,customers:'homeowners, contractors, developers and small commercial clients'},
+ 'Transportation & Logistics':{margin:.27,growth:.05,customers:'commuters, businesses, retailers and delivery customers'},
+ 'Tourism & Hospitality':{margin:.39,growth:.06,customers:'local travellers, diaspora visitors, regional tourists and corporate groups'},
+ 'Technology & Digital Services':{margin:.48,growth:.07,customers:'small businesses, professionals, schools and organisations seeking digital services'},
+ 'Fisheries & Marine':{margin:.30,growth:.045,customers:'households, restaurants, markets and seafood distributors'},
+ 'Manufacturing & Processing':{margin:.29,growth:.05,customers:'retailers, distributors, institutions and direct consumers'},
+ 'Professional Services':{margin:.52,growth:.055,customers:'individuals, SMEs, established companies and public-sector clients'},
+ 'Creative & Other Services':{margin:.45,growth:.06,customers:'consumers, events, brands and organisations seeking custom creative work'}
+};
+let selectedCategory='Food & Catering';
+let currentPlan=null;
+
+function money(n){return 'GYD $'+Math.round(n||0).toLocaleString('en-US')}
+function slugScreen(name){return document.getElementById(name+'Screen')}
+function go(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));slugScreen(name).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.nav===name));if(name==='saved')renderSaved();if(name==='settings')updateSettings();window.scrollTo(0,0)}
+function showCreate(cat){if(cat)selectedCategory=cat;renderChips();go('create')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);try{Android.toast(msg)}catch(e){}}
+
+function renderCategories(){document.getElementById('categories').innerHTML=categories.map(([name,emo])=>`<button class="category" onclick="showCreate('${name.replaceAll("'","\\'")}')"><span class="emo">${emo}</span><strong>${name}</strong></button>`).join('')}
+function renderChips(){document.getElementById('chips').innerHTML=categories.slice(0,8).map(([name,emo])=>`<button class="chip ${selectedCategory===name?'active':''}" onclick="selectedCategory='${name.replaceAll("'","\\'")}';renderChips()">${emo} ${name.split(' & ')[0]}</button>`).join('')}
+
+function extractName(idea){const m=idea.match(/(?:called|named)\s+([A-Z][A-Za-z0-9 &'’-]{2,32})/);return m?m[1].trim().replace(/[.,]$/,''):'My Guyana Business'}
+function inferCategory(idea){const s=idea.toLowerCase();const tests=[['Agriculture & Farming',['farm','crop','agri','vegetable','livestock']],['Food & Catering',['food','cater','restaurant','lunch','bakery','snack']],['Retail & Trading',['retail','shop','store','sell','trading']],['Beauty & Wellness',['beauty','salon','hair','nail','spa']],['Construction & Building',['construction','building','contractor','masonry']],['Transportation & Logistics',['transport','taxi','bus','delivery','logistics']],['Tourism & Hospitality',['tour','hotel','guest','travel','resort']],['Technology & Digital Services',['tech','software','website','computer','digital','it service']],['Fisheries & Marine',['fish','fishing','marine','seafood']],['Manufacturing & Processing',['manufactur','process','factory','production']],['Professional Services',['consult','account','legal','training','professional']],['Creative & Other Services',['design','print','photo','creative','art']]];for(const [cat,keys] of tests)if(keys.some(k=>s.includes(k)))return cat;return selectedCategory}
+
+function generatePlan(){
+ const idea=document.getElementById('idea').value.trim(); if(idea.length<18){toast('Please describe your business idea first.');return}
+ const cat=inferCategory(idea); selectedCategory=cat; const preset=sectorPresets[cat]||sectorPresets['Professional Services'];
+ const funding=Math.max(100000,parseInt((document.getElementById('amount').value||'1500000').replace(/\D/g,''))||1500000);
+ const name=document.getElementById('businessName').value.trim()||extractName(idea);
+ const startup=Math.round(funding*.47), equipment=Math.round(funding*.28), working=Math.round(funding*.25);
+ const baseSales=Math.max(220000,Math.round(funding*.29)); const months=[];let cumulative=0;
+ for(let i=1;i<=12;i++){const season=1+((i===11||i===12)?0.12:0);const sales=Math.round(baseSales*Math.pow(1+preset.growth,i-1)*season);const profit=Math.round(sales*preset.margin);cumulative+=profit;months.push({i,sales,profit})}
+ const jobs=Math.max(1,Math.min(12,Math.round(funding/650000)));
+ const plan={id:Date.now(),name,idea,cat,funding,startup,equipment,working,months,jobs,margin:preset.margin,customers:preset.customers,created:new Date().toISOString()};currentPlan=plan;savePlan(plan);renderPlan(plan);go('plan');toast('Business plan created and saved.');
+}
+function savePlan(plan){let arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');arr=arr.filter(p=>p.id!==plan.id);arr.unshift(plan);localStorage.setItem('gbpb_plans',JSON.stringify(arr.slice(0,30)))}
+function renderPlan(p){
+ const first=p.months[0], last=p.months[p.months.length-1];
+ document.getElementById('planContent').innerHTML=`
+ <div class="plan-title"><div class="crumb">← Home &nbsp; • &nbsp; Guyana Business Plan Builder</div><h1>${esc(p.name)}</h1><small>${esc(p.cat)} • Guyana</small></div>
+ <div class="plan-card"><h3>Executive Summary</h3><p>${esc(p.name)} is a Guyana-focused ${p.cat.toLowerCase()} venture built around this idea: ${esc(p.idea)} The plan prioritises a clear customer offer, disciplined startup spending, reliable service and repeat business.</p><div class="metrics"><div class="metric"><span>Estimated startup funding</span><b>${money(p.funding)}</b></div><div class="metric"><span>Illustrative year-1 sales</span><b>${money(p.months.reduce((a,m)=>a+m.sales,0))}</b></div><div class="metric"><span>Potential jobs</span><b>${p.jobs}</b></div><div class="metric"><span>Planning margin</span><b>${Math.round(p.margin*100)}%</b></div></div></div>
+ <div class="plan-card"><h3>Business Opportunity</h3><p>The business can compete by combining local knowledge, responsive customer service and a focused offer. Its core target customers are ${esc(p.customers)}. Early validation should come from direct customer conversations, small pilot sales and tracking which products or services generate repeat demand.</p></div>
+ <div class="plan-card"><h3>Marketing & Sales Strategy</h3><p>Use Facebook, WhatsApp, Instagram, referrals, community visibility and partnerships to generate leads. Keep pricing simple, publish clear contact information, collect customer reviews and use introductory offers without permanently lowering margins. Track enquiries, conversion rate and repeat customers every month.</p></div>
+ <div class="plan-card"><h3>Operations</h3><p>Start with a lean workflow: secure required supplies and equipment, document daily tasks, maintain simple stock and cash records, and schedule purchases around actual demand. Separate business funds from personal spending and keep invoices, receipts and customer records organised from day one.</p></div>
+ <div class="plan-card"><h3>Funding Requirement</h3><p>Total illustrative funding requirement: <strong>${money(p.funding)}</strong>.</p>
+   ${bar('Startup / setup',p.startup,p.funding)}${bar('Equipment / tools',p.equipment,p.funding)}${bar('Working capital',p.working,p.funding)}
+ </div>
+ <div class="plan-card"><h3>12-Month Financial Outlook</h3><p>This projection is a planning model, not a guarantee. It assumes gradual customer growth and the planning margin selected for the business type.</p><div class="monthlist">${p.months.map(m=>`<strong>Month ${m.i}</strong> — Sales ${money(m.sales)} • Estimated operating profit ${money(m.profit)}<br>`).join('')}</div><div class="metrics"><div class="metric"><span>Month 1 sales</span><b>${money(first.sales)}</b></div><div class="metric"><span>Month 12 sales</span><b>${money(last.sales)}</b></div></div></div>
+ <div class="plan-card"><h3>SWOT Analysis</h3><div class="swot"><div><b>Strengths</b><p>Local focus, direct customer relationships, flexible decision-making and low overhead potential.</p></div><div><b>Weaknesses</b><p>New brand, limited initial capacity and dependence on disciplined cash flow.</p></div><div><b>Opportunities</b><p>Digital marketing, partnerships, underserved niches and repeat-customer growth.</p></div><div><b>Threats</b><p>Price competition, supplier changes, demand swings and unexpected operating costs.</p></div></div></div>
+ <div class="plan-card"><h3>Implementation Plan</h3><p><strong>Weeks 1–2:</strong> validate demand, confirm suppliers and finalise pricing. <strong>Weeks 3–4:</strong> acquire essential equipment, set up records and brand assets. <strong>Month 2:</strong> launch a focused sales campaign and measure results. <strong>Months 3–6:</strong> improve the highest-performing offer, build repeat sales and add capacity only when demand supports it.</p></div>
+ <div class="unlock"><h3>Professional Printable Plan</h3><p>${isUnlocked()?'Unlocked on this device. You can print or save to PDF.':'Unlock the professional printable layout and PDF-ready output.'}</p><button class="pay" onclick="${isUnlocked()?'printPlan()':'openPayment()'}">${isUnlocked()?'🖨 Print / Save PDF':'Unlock PDF • GYD $500'}</button></div>
+ <button class="secondary print-hide" onclick="showCreate('${p.cat.replaceAll("'","\\'")}')">Edit / Create Another Plan</button>`;
+}
+function bar(label,val,total){return `<div class="barrow"><label><span>${label}</span><span>${money(val)}</span></label><div class="bar"><i style="width:${Math.max(6,val/total*100)}%"></i></div></div>`}
+function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function renderSaved(){const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const el=document.getElementById('savedList');if(!arr.length){el.innerHTML='<div class="saved-empty">📄<h3>No saved plans yet</h3><p>Create your first business plan and it will appear here.</p><button class="primary" onclick="showCreate()">Create a Plan</button></div>';return}el.innerHTML=arr.map(p=>`<div class="saved-card"><h3>${esc(p.name)}</h3><small>${esc(p.cat)} • ${new Date(p.created).toLocaleDateString()}</small><div class="row"><button class="smallbtn" onclick="openSaved(${p.id})">Open</button><button class="smallbtn" onclick="deleteSaved(${p.id})">Delete</button></div></div>`).join('')}
+function openSaved(id){const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const p=arr.find(x=>x.id===id);if(p){currentPlan=p;renderPlan(p);go('plan')}}
+function deleteSaved(id){let arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]').filter(x=>x.id!==id);localStorage.setItem('gbpb_plans',JSON.stringify(arr));renderSaved();toast('Plan deleted.')}
+function isUnlocked(){return localStorage.getItem('gbpb_unlocked')==='1'}
+function openPayment(){document.getElementById('paymentModal').classList.add('show')}
+function closePayment(){document.getElementById('paymentModal').classList.remove('show')}
+function demoUnlock(){localStorage.setItem('gbpb_unlocked','1');closePayment();updateSettings();if(currentPlan)renderPlan(currentPlan);toast('Professional plan unlocked on this device.')}
+function updateSettings(){const yes=isUnlocked();document.getElementById('unlockStatus').textContent=yes?'Professional printing is enabled':'Not unlocked';document.getElementById('unlockBadge').textContent=yes?'Unlocked':'Locked'}
+function printPlan(){try{Android.printPlan()}catch(e){window.print()}}
+
+const tipData=[['💵','Know your numbers','Separate startup costs, monthly operating costs and working capital. Keep a cash buffer rather than spending the full funding amount immediately.'],['🎯','Define one clear customer','A plan becomes stronger when it states exactly who is expected to buy, why they need the offer and how you will reach them.'],['📣','Use low-cost channels first','WhatsApp, Facebook, referrals and partnerships can validate demand before you spend heavily on advertising.'],['🧾','Keep records from day one','Track every sale and expense. Good records help with pricing, cash flow, tax preparation and financing conversations.'],['📦','Buy inventory from demand','Avoid tying up too much cash in stock. Start lean, measure what sells and restock around real demand.'],['🤝','Build repeat customers','Follow up, ask for feedback and make it easy for satisfied customers to buy again or refer someone else.']];
+function renderTips(){document.getElementById('tips').innerHTML=tipData.map(([e,h,p])=>`<div class="tip"><b>${e}</b><h3>${h}</h3><p>${p}</p></div>`).join('')}
+renderCategories();renderChips();renderTips();updateSettings();
+</script>
+</body>
+</html>
