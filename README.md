@@ -1,29 +1,65 @@
-# Guyana Business Plan Builder — Android prototype
+# Guyana Business Plan Builder v4 — Offline AI
 
-A local-first Android prototype based on the supplied reference screens.
+This version upgrades the original WebView-based Android project into an offline-first AI business-plan app.
 
-## Included
-- Guyana-themed mobile home screen and business categories
-- Guided business idea form
-- Local business-plan generation from the user's inputs
-- Executive summary, opportunity, marketing, operations, funding, 12-month projection, SWOT and implementation sections
-- Saved plans stored on-device using WebView local storage
-- Business tips, payment/unlock prototype and settings
-- Android print framework support for Print / Save PDF
-- No external web libraries or runtime dependencies inside the app
-- GitHub Actions workflow that builds a debug APK
+## What changed
 
-## Build in GitHub
-1. Create a GitHub repository and upload this project with the same folder structure.
-2. Open the **Actions** tab.
-3. Run **Build Android APK** (or push to `main`).
-4. Download the `guyana-business-plan-debug-apk` artifact.
-5. Extract and install `app-debug.apk` on Android.
+- **On-device Qwen**: the app can download `Qwen3-1.7B-Q4_K_M.gguf` once and run it locally.
+- **No AI API key**: generation uses an Android llama.cpp runtime, not OpenAI or a paid search API.
+- **Curated Guyana RAG pack**: 30 local knowledge chunks cover planning, financing, GRA/VAT/TIN references, NIS, SBB and sector playbooks.
+- **Deterministic financial planning**: startup allocation and 12-month projections remain app calculations rather than AI arithmetic.
+- **Anti-hallucination rules**: missing current facts are labelled `VERIFY` or `ESTIMATE`.
+- **Fallback mode**: the app still creates a useful offline template plan when Qwen is not downloaded.
+- **Model Manager**: Settings shows download progress, Wi-Fi-only option, deletion and SHA-256 verification.
+- **GitHub Actions**: `.github/workflows/android.yml` builds a debug APK.
 
-## Local Android Studio build
-Open the project root in Android Studio, let Gradle sync, then use **Build > Build APK(s)**.
+## Local AI model
 
-## Production work still needed
-The included GYD $500 unlock is intentionally a demo-only local unlock. Before publishing, connect a verified payment provider and server-side receipt validation. Review all financial language, privacy policy, branding, Play Store requirements, and any business-registration/tax guidance you add later.
+Default model:
+- `ggml-org/Qwen3-1.7B-GGUF`
+- file: `Qwen3-1.7B-Q4_K_M.gguf`
+- approx. 1.28 GB
+- Apache-2.0 model license
+- expected SHA-256: `d2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5`
 
-This prototype is an independent planning tool and does not claim Government of Guyana affiliation.
+The model is **not included in the APK**. The user downloads it from inside the app and it is stored in the app's private external-files directory.
+
+## Runtime
+
+The project uses the Maven Central AAR:
+
+`dev.ffmpegkit-maintained:llama-android:0.1.1`
+
+This wraps llama.cpp for on-device GGUF inference. The free AAR supports arm64-v8a and Android API 24+.
+
+## Build
+
+The repository includes a GitHub Actions workflow. You can also build locally with Java 17 and Gradle:
+
+```bash
+gradle assembleDebug
+```
+
+APK output:
+
+```text
+app/build/outputs/apk/debug/app-debug.apk
+```
+
+## Important limitations
+
+- The first Qwen generation can be slow because the model must be loaded from storage.
+- The app targets arm64-v8a phones.
+- Regulatory information is a dated planning reference, not legal/tax advice. Refresh the local knowledge pack periodically.
+- The payment screen still uses the prototype unlock. MMG should be connected later using a verified merchant/backend flow rather than storing merchant secrets in the APK.
+
+## Local knowledge files
+
+```text
+app/src/main/assets/knowledge/
+├── knowledge.json
+├── formulas.json
+└── sources.json
+```
+
+Reviewed: 2026-09-28

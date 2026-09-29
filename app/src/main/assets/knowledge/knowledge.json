@@ -1,0 +1,434 @@
+{
+  "name": "Guyana Business Plan Offline Knowledge Pack",
+  "version": "4.0-2026-09-28",
+  "updated": "2026-09-28",
+  "purpose": "Local retrieval context for on-device business-plan generation. Regulatory facts are dated and require periodic review.",
+  "chunks": [
+    {
+      "id": "gra_tin_2026",
+      "title": "GRA Taxpayer Identification Number (TIN)",
+      "tags": [
+        "all",
+        "registration",
+        "tax",
+        "gra"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "GRA states that a TIN is a unique number issued to taxpayers. Before applying, determine whether the business will operate as a sole trader, partnership or company. The published first-application fee is GYD 1,000. Sole traders can use an Individual TIN to register a Business TIN.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/quick-links-2/start-your-business/apply-for-tin/"
+    },
+    {
+      "id": "gra_income_tax_2026",
+      "title": "2026 individual income-tax planning reference",
+      "tags": [
+        "all",
+        "tax",
+        "payroll",
+        "finance"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "For 2026, GRA publishes an annual personal deduction of GYD 1,680,000 or one-third of qualifying income, whichever is greater. Chargeable income up to GYD 3,360,000 annually is taxed at 25%, with the balance above that amount at 35%. Use these figures only for 2026 and verify after the review date.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/notice-to-employers-employees-self-employed-persons-revised-personal-allowance-and-deductions-for-income-tax-2026/"
+    },
+    {
+      "id": "gra_vat_2026",
+      "title": "VAT registration threshold and rate",
+      "tags": [
+        "all",
+        "tax",
+        "vat",
+        "retail",
+        "food",
+        "services"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "GRA states that mandatory VAT registration generally applies when taxable activity equals or exceeds GYD 15,000,000 over the relevant 12-month tests. The standard VAT rate is 14%. A business must be registered before charging VAT. Verify the treatment of the business's specific supplies because some supplies can be exempt or zero-rated.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/tax-services/vat-services/register-for-vat/"
+    },
+    {
+      "id": "nis_contributions",
+      "title": "NIS contribution planning reference",
+      "tags": [
+        "all",
+        "payroll",
+        "staffing",
+        "nis",
+        "finance"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "NIS publishes a total employed-person contribution rate of 14%: 5.6% deducted from the employee and 8.4% paid by the employer, subject to the current insurable-earnings ceiling published by NIS. The NIS site currently lists a monthly ceiling of GYD 280,000. Verify before formal payroll use.",
+      "source": "National Insurance Scheme Guyana",
+      "url": "https://www.nis.org.gy/benefits_payable"
+    },
+    {
+      "id": "sbb_definition",
+      "title": "Small Business Bureau definition reference",
+      "tags": [
+        "all",
+        "small business",
+        "funding",
+        "government procurement"
+      ],
+      "priority": 4,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "The Small Business Bureau currently describes a small business as employing no more than 25 persons, having gross annual revenue of no more than GYD 60 million, and total business assets of no more than GYD 20 million. Verify eligibility directly with SBB before relying on a programme.",
+      "source": "Small Business Bureau",
+      "url": "https://sbb.gov.gy/about/"
+    },
+    {
+      "id": "sbb_procurement",
+      "title": "20% Government Procurement Programme",
+      "tags": [
+        "all",
+        "procurement",
+        "government",
+        "sales",
+        "professional services",
+        "construction"
+      ],
+      "priority": 4,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "SBB describes a programme intended to facilitate 20% of Government procurement of goods, services and works from small businesses. Participation requires SBB registration and supporting documents such as TIN, compliance, NIS and business registration records. Treat procurement as an opportunity, not guaranteed revenue.",
+      "source": "Small Business Bureau",
+      "url": "https://sbb.gov.gy/20-government-procurement/"
+    },
+    {
+      "id": "startup_costs",
+      "title": "Startup cost structure",
+      "tags": [
+        "all",
+        "finance",
+        "funding",
+        "startup"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Separate one-time setup costs from recurring operating costs. Common setup categories include registration, deposits, fit-out, tools and equipment, initial inventory, branding, licences and contingency. Working capital should cover the gap before customer receipts become reliable."
+    },
+    {
+      "id": "cash_flow",
+      "title": "Cash-flow planning",
+      "tags": [
+        "all",
+        "finance",
+        "cash flow"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "A profitable business can still run out of cash. Forecast when money is actually collected and when suppliers, wages, rent, transport, utilities, taxes and loan payments are actually paid. Keep a cash buffer and monitor the lowest cash point each month."
+    },
+    {
+      "id": "pricing",
+      "title": "Pricing and gross margin",
+      "tags": [
+        "all",
+        "pricing",
+        "finance",
+        "sales"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Build prices from direct cost, overhead, target margin, customer willingness to pay and competitor context. Do not copy a competitor price without knowing whether it covers your own costs. Separate markup from margin when calculating profitability."
+    },
+    {
+      "id": "break_even",
+      "title": "Break-even planning",
+      "tags": [
+        "all",
+        "finance",
+        "break even"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Break-even units equal fixed costs divided by contribution per unit, where contribution per unit is selling price minus variable cost per unit. If the contribution is zero or negative, the business cannot cover fixed costs at that price."
+    },
+    {
+      "id": "records_controls",
+      "title": "Records and internal controls",
+      "tags": [
+        "all",
+        "finance",
+        "operations"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Keep business and personal money separate. Retain receipts and invoices, record every sale and expense, reconcile cash and bank balances, track debtors and creditors, and back up important records. These controls improve lending readiness and reduce leakage."
+    },
+    {
+      "id": "market_validation",
+      "title": "Validate demand before scaling",
+      "tags": [
+        "all",
+        "market",
+        "sales",
+        "customers"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use interviews, pre-orders, pilot sales, quotation requests and small test batches to validate demand before committing to large fixed costs. Record what customers actually buy, not only what they say they like."
+    },
+    {
+      "id": "digital_marketing",
+      "title": "Low-cost customer acquisition",
+      "tags": [
+        "all",
+        "marketing",
+        "sales"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "For many Guyanese SMEs, practical low-cost channels can include WhatsApp, Facebook, Instagram, referrals, community visibility, partnerships and repeat-customer follow-up. Track enquiries, conversions, acquisition cost and repeat purchase rate."
+    },
+    {
+      "id": "risk_register",
+      "title": "Business risk register",
+      "tags": [
+        "all",
+        "risk",
+        "operations"
+      ],
+      "priority": 2,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "List the main risks, their likelihood and impact, early warning signs, mitigation actions and responsible person. Common SME risks include supplier disruption, cash shortages, equipment failure, staff absence, demand swings, theft, weather and regulatory changes."
+    },
+    {
+      "id": "funding_readiness",
+      "title": "Lender and investor readiness",
+      "tags": [
+        "all",
+        "funding",
+        "loan",
+        "finance"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "A funding request should explain exactly how much is needed, what each portion will purchase, how the spending increases capacity or revenue, the owner's contribution, expected cash generation and how repayment would be supported. Avoid presenting optimistic sales as guaranteed."
+    },
+    {
+      "id": "agriculture_playbook",
+      "title": "Agriculture and farming playbook",
+      "tags": [
+        "agriculture",
+        "farming"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Plan land access, water, drainage, planting cycles, inputs, labour, storage, spoilage, transport and buyer arrangements. Model weather and yield downside cases. Validate off-take with markets, wholesalers, restaurants, processors or direct consumers before expanding acreage."
+    },
+    {
+      "id": "food_playbook",
+      "title": "Food and catering playbook",
+      "tags": [
+        "food",
+        "catering",
+        "restaurant",
+        "bakery"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Track ingredient cost per serving, packaging, fuel, labour, spoilage and delivery separately. Standardise recipes and portions. Include food-safety, premises, environmental-health and other licence checks as VERIFY items unless confirmed for the exact operation."
+    },
+    {
+      "id": "retail_playbook",
+      "title": "Retail and trading playbook",
+      "tags": [
+        "retail",
+        "trading",
+        "shop",
+        "store"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Plan opening inventory by fast-, medium- and slow-moving items. Track gross margin, stock turns, shrinkage, supplier lead time and cash tied up in stock. Avoid using all startup capital on inventory before demand is proven."
+    },
+    {
+      "id": "beauty_playbook",
+      "title": "Beauty and wellness playbook",
+      "tags": [
+        "beauty",
+        "wellness",
+        "salon",
+        "barber"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Plan service time, staff or chair capacity, consumables per service, appointment utilisation, repeat-booking rate and hygiene controls. Separate high-margin services from retail product sales when forecasting."
+    },
+    {
+      "id": "construction_playbook",
+      "title": "Construction and building playbook",
+      "tags": [
+        "construction",
+        "building",
+        "contractor"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Price jobs from materials, labour, transport, equipment hire, wastage, supervision, contingency and profit. Manage deposits and stage payments to avoid financing the client's project from your own cash. Use written scope and change-order controls."
+    },
+    {
+      "id": "transport_playbook",
+      "title": "Transportation and logistics playbook",
+      "tags": [
+        "transportation",
+        "logistics",
+        "delivery",
+        "taxi"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Forecast fuel, maintenance, tyres, insurance, licensing, downtime and driver costs. Track revenue per trip or delivery, utilisation, empty return trips and vehicle replacement reserve."
+    },
+    {
+      "id": "tourism_playbook",
+      "title": "Tourism and hospitality playbook",
+      "tags": [
+        "tourism",
+        "hospitality",
+        "hotel",
+        "tour"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Model occupancy or booking volume, seasonality, commissions, cleaning, utilities, transport, guest safety and review scores. Define the target traveller and distribution channels rather than assuming constant occupancy."
+    },
+    {
+      "id": "technology_playbook",
+      "title": "Technology and digital services playbook",
+      "tags": [
+        "technology",
+        "digital",
+        "software",
+        "it service",
+        "app"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Define the service package, scope boundaries, recurring versus one-off revenue, support commitments, hosting/software costs, data protection controls and delivery capacity. Use deposits or milestones for project work."
+    },
+    {
+      "id": "fisheries_playbook",
+      "title": "Fisheries and marine playbook",
+      "tags": [
+        "fisheries",
+        "marine",
+        "fish",
+        "seafood"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Plan vessel or landing access, fuel, ice/cold chain, gear, crew, spoilage, storage, transport and buyer arrangements. Forecast catch and price variability rather than using one optimistic average."
+    },
+    {
+      "id": "manufacturing_playbook",
+      "title": "Manufacturing and processing playbook",
+      "tags": [
+        "manufacturing",
+        "processing",
+        "factory"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Map raw materials, yield, waste, labour, power, maintenance, packaging, quality checks, batch capacity and working capital. Calculate unit economics at realistic utilisation, not only full capacity."
+    },
+    {
+      "id": "professional_services_playbook",
+      "title": "Professional services playbook",
+      "tags": [
+        "professional services",
+        "consulting",
+        "training"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Forecast billable hours or projects, utilisation, collection time, subcontractors, software, travel and professional overhead. Clarify deliverables and payment milestones. Reputation, referrals and repeat contracts are key acquisition channels."
+    },
+    {
+      "id": "creative_services_playbook",
+      "title": "Creative and other services playbook",
+      "tags": [
+        "creative",
+        "design",
+        "printing",
+        "photography",
+        "events"
+      ],
+      "priority": 5,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Price for labour time, materials, revisions, equipment depreciation, travel and rush work. Use deposits and written approval checkpoints. Build a portfolio and measure enquiry-to-booking conversion."
+    },
+    {
+      "id": "staffing_plan",
+      "title": "Staffing plan",
+      "tags": [
+        "all",
+        "staffing",
+        "payroll"
+      ],
+      "priority": 2,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Start with roles required to deliver the offer safely and reliably. Distinguish owner labour from paid staff, include employer payroll costs, define responsibilities and add headcount only when demand and cash flow support it."
+    },
+    {
+      "id": "implementation_timeline",
+      "title": "Implementation timeline",
+      "tags": [
+        "all",
+        "timeline",
+        "launch"
+      ],
+      "priority": 2,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "A practical launch sequence is: validate demand; confirm registration and licences; finalise supplier quotes and pricing; secure essential equipment; establish records; pilot the offer; launch marketing; review first-month results; then expand only what is working."
+    },
+    {
+      "id": "assumptions_policy",
+      "title": "Assumption and verification policy",
+      "tags": [
+        "all",
+        "verify",
+        "risk"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Any current rent, supplier price, customs charge, loan rate, licence fee, grant, competitor price, demand statistic or regulatory requirement not present in the curated pack must be labelled ESTIMATE or VERIFY rather than stated as a fact."
+    }
+  ]
+}

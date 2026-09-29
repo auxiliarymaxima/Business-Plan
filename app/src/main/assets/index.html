@@ -53,6 +53,21 @@
     .bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);height:76px;background:rgba(255,255,255,.97);border-top:1px solid #e1e7e3;display:grid;grid-template-columns:repeat(5,1fr);z-index:40;padding-bottom:max(5px,env(safe-area-inset-bottom));backdrop-filter:blur(12px)}.nav{border:0;background:none;color:#667085;font-size:10px;font-weight:760;padding:7px 2px}.nav b{display:block;font-size:21px;margin-bottom:2px}.nav.active{color:var(--green)}
     .toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(15px);background:#15241c;color:#fff;padding:11px 14px;border-radius:12px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     .modal{position:fixed;inset:0;background:rgba(7,20,12,.55);display:none;align-items:flex-end;z-index:60}.modal.show{display:flex}.sheet{background:white;width:min(520px,100%);margin:auto;border-radius:28px 28px 0 0;padding:20px 16px 28px;max-height:84vh;overflow:auto}.handle{width:60px;height:6px;background:#d3d9d5;border-radius:20px;margin:0 auto 16px}.price{font-size:38px;font-weight:1000;color:var(--green)}.disclaimer{font-size:11px;color:#7b8580;line-height:1.45}
+
+    .ai-strip{margin:0 14px 14px;border:1px solid #cce6d5;background:linear-gradient(135deg,#f4fff8,#fffbea);border-radius:18px;padding:13px 14px;box-shadow:var(--shadow)}
+    .ai-strip strong{display:flex;align-items:center;gap:7px;color:#0a7540;font-size:14px}.ai-strip p{margin:5px 0 0;color:#53645a;font-size:11.5px;line-height:1.45}
+    .ai-status{margin:10px 0 0;padding:10px 12px;border-radius:13px;background:#eef8f2;color:#24613f;font-size:12px;font-weight:760}
+    .ai-status.warn{background:#fff6de;color:#7b5b10}.ai-status.error{background:#fff0f0;color:#8b2d2d}
+    .model-card{background:white;border:1px solid #dfe8e2;border-radius:18px;padding:15px;margin:12px 0;box-shadow:var(--shadow)}
+    .model-card h3{margin:0 0 4px}.model-meta{font-size:11.5px;color:#667085;line-height:1.45}
+    .model-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0}
+    .model-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.model-actions button{margin:0}
+    .progress{height:10px;border-radius:20px;background:#e8efea;overflow:hidden;margin:9px 0}.progress i{height:100%;display:block;width:0;background:linear-gradient(90deg,#078541,#f3c735);transition:width .3s}
+    .tiny{font-size:10.5px;color:#778078;line-height:1.45}.toggleline{display:flex;align-items:center;gap:8px;font-size:12px;color:#435149}
+    .toggleline input{width:18px;height:18px;accent-color:var(--green)}
+    .ai-output h3{color:#0b7040;margin:17px 0 7px}.ai-output p{margin:0 0 10px}.ai-output ul{margin:5px 0 12px;padding-left:20px}.ai-output li{margin:4px 0;font-size:13px;line-height:1.45;color:#34433a}
+    .source-chip{display:inline-block;background:#f0f7f3;color:#306144;border-radius:20px;padding:5px 8px;margin:3px 4px 3px 0;font-size:10px;font-weight:800}
+
     @media(min-width:440px){.categories{grid-template-columns:repeat(3,1fr)}.category{min-height:112px}}
     @media print{.topbar,.bottom,.unlock,.print-hide{display:none!important}.app{max-width:none;box-shadow:none;padding:0}.plan-card,.plan-title{box-shadow:none;break-inside:avoid}.screen{display:none!important}#planScreen{display:block!important}.plan-wrap{padding:0}.page{padding:0}}
   </style>
@@ -82,6 +97,7 @@
         <div class="section-head"><h2>Choose Your Business Type</h2><button class="link" onclick="showCreate()">See all ›</button></div>
         <div class="categories" id="categories"></div>
       </div>
+      <div class="ai-strip"><strong>🤖 Offline AI • No API fees</strong><p>Qwen runs on the phone and uses a curated Guyana business knowledge pack. Internet is only needed once to download the model.</p></div>
       <div class="local-banner"><div><b>📈</b>Support Local Business</div><div><b>👥</b>Create Jobs in Guyana</div><div><b>🌱</b>Grow Our Economy</div></div>
     </section>
 
@@ -93,7 +109,8 @@
         <div class="field"><label>Your business idea</label><textarea id="idea" class="input" placeholder="Example: I want to start a small catering business in Georgetown selling Guyanese lunches to offices and events."></textarea></div>
         <div class="field"><label>Business name <small>(optional)</small></label><input id="businessName" class="input" placeholder="Leave blank if you do not have one yet" /></div>
         <div class="field"><label>Approximate amount needed <small>(GYD, optional)</small></label><input id="amount" class="input" inputmode="numeric" placeholder="e.g. 1500000" /></div>
-        <button class="primary" onclick="generatePlan()">✨ Create My Business Plan</button>
+        <button class="primary" id="generateBtn" onclick="generatePlan()">✨ Create My Business Plan</button>
+        <div class="ai-status" id="createAiStatus">Checking local AI…</div>
         <button class="secondary" onclick="go('home')">Not now</button>
       </div>
     </section>
@@ -116,12 +133,27 @@
     </section>
 
     <section id="settingsScreen" class="screen">
-      <div class="page"><h1>Settings</h1><p class="sub">App preferences and prototype information.</p>
+      <div class="page"><h1>Settings</h1><p class="sub">Offline AI, storage and app preferences.</p>
+        <div class="model-card">
+          <div class="model-row"><div><h3>Local AI Model</h3><div class="model-meta">Qwen3 1.7B • Q4_K_M GGUF • about 1.28 GB</div></div><span class="badge" id="modelBadge">Checking</span></div>
+          <p class="model-meta">Runs locally with llama.cpp. After the one-time download there is no OpenAI bill, no search-API bill and no API key.</p>
+          <div class="progress"><i id="modelProgress"></i></div>
+          <div class="tiny" id="modelDetail">Checking model storage…</div>
+          <label class="toggleline"><input id="wifiOnly" type="checkbox" checked /> Download model on Wi-Fi only</label>
+          <label class="toggleline" style="margin-top:7px"><input id="useLocalAi" type="checkbox" checked onchange="saveAiPreference()" /> Use local Qwen when available</label>
+          <div class="model-actions" style="margin-top:12px">
+            <button class="primary" id="downloadModelBtn" onclick="downloadLocalModel()">Download AI</button>
+            <button class="secondary" id="verifyModelBtn" onclick="verifyLocalModel()">Verify</button>
+            <button class="secondary" onclick="deleteLocalModel()">Delete model</button>
+            <button class="secondary" onclick="refreshModelStatus(true)">Refresh</button>
+          </div>
+        </div>
+        <div class="setting"><div><strong>Guyana knowledge pack</strong><small id="knowledgeStatus">Loading curated content</small></div><span class="badge" id="knowledgeBadge">Local</span></div>
         <div class="setting"><div><strong>Currency</strong><small>Financial figures use Guyanese dollars</small></div><span class="badge">GYD</span></div>
-        <div class="setting"><div><strong>Local storage</strong><small>Plans stay on this device</small></div><span class="badge">On</span></div>
+        <div class="setting"><div><strong>Local storage</strong><small>Plans and knowledge stay on this device</small></div><span class="badge">On</span></div>
         <div class="setting"><div><strong>Professional unlock</strong><small id="unlockStatus">Not unlocked</small></div><span class="badge" id="unlockBadge">Locked</span></div>
-        <div class="setting"><div><strong>App version</strong><small>Prototype build</small></div><span class="badge">1.0.0</span></div>
-        <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning prototype and is not an official Government of Guyana service. Financial projections are illustrative planning estimates and should be reviewed before being used for lending, investment, tax, or legal decisions.</p></div>
+        <div class="setting"><div><strong>App version</strong><small>Offline AI build</small></div><span class="badge">4.0</span></div>
+        <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning tool and is not an official Government of Guyana service. Regulatory facts in the local knowledge pack are dated and should be verified before lending, investment, tax or legal decisions.</p></div>
       </div>
     </section>
   </main>
@@ -137,83 +169,7 @@
 <div class="toast" id="toast"></div>
 <div class="modal" id="paymentModal" onclick="if(event.target===this)closePayment()"><div class="sheet"><div class="handle"></div><h2>Unlock Professional Plan</h2><div class="price">GYD $500</div><p>For this prototype, the button below simulates a successful one-time purchase on this device.</p><button class="primary" onclick="demoUnlock()">Demo Unlock</button><button class="secondary" onclick="closePayment()">Cancel</button><p class="disclaimer">For production, replace the demo action with a verified payment provider and server-side receipt validation.</p></div></div>
 
-<script>
-const categories=[
-  ['Agriculture & Farming','🌾'],['Food & Catering','🍛'],['Retail & Trading','🛍️'],['Beauty & Wellness','💇🏽‍♀️'],['Construction & Building','🏗️'],['Transportation & Logistics','🚌'],['Tourism & Hospitality','🌴'],['Technology & Digital Services','💻'],['Fisheries & Marine','🎣'],['Manufacturing & Processing','⚙️'],['Professional Services','🧑🏽‍💼'],['Creative & Other Services','🎨']
-];
-const sectorPresets={
- 'Agriculture & Farming':{margin:.31,growth:.055,customers:'households, wholesalers, restaurants, supermarkets and agro-processors'},
- 'Food & Catering':{margin:.36,growth:.06,customers:'office workers, families, event organisers and walk-in customers'},
- 'Retail & Trading':{margin:.25,growth:.05,customers:'local consumers, small businesses and repeat neighbourhood buyers'},
- 'Beauty & Wellness':{margin:.43,growth:.055,customers:'working professionals, students, bridal clients and repeat personal-care customers'},
- 'Construction & Building':{margin:.28,growth:.045,customers:'homeowners, contractors, developers and small commercial clients'},
- 'Transportation & Logistics':{margin:.27,growth:.05,customers:'commuters, businesses, retailers and delivery customers'},
- 'Tourism & Hospitality':{margin:.39,growth:.06,customers:'local travellers, diaspora visitors, regional tourists and corporate groups'},
- 'Technology & Digital Services':{margin:.48,growth:.07,customers:'small businesses, professionals, schools and organisations seeking digital services'},
- 'Fisheries & Marine':{margin:.30,growth:.045,customers:'households, restaurants, markets and seafood distributors'},
- 'Manufacturing & Processing':{margin:.29,growth:.05,customers:'retailers, distributors, institutions and direct consumers'},
- 'Professional Services':{margin:.52,growth:.055,customers:'individuals, SMEs, established companies and public-sector clients'},
- 'Creative & Other Services':{margin:.45,growth:.06,customers:'consumers, events, brands and organisations seeking custom creative work'}
-};
-let selectedCategory='Food & Catering';
-let currentPlan=null;
 
-function money(n){return 'GYD $'+Math.round(n||0).toLocaleString('en-US')}
-function slugScreen(name){return document.getElementById(name+'Screen')}
-function go(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));slugScreen(name).classList.add('active');document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.nav===name));if(name==='saved')renderSaved();if(name==='settings')updateSettings();window.scrollTo(0,0)}
-function showCreate(cat){if(cat)selectedCategory=cat;renderChips();go('create')}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);try{Android.toast(msg)}catch(e){}}
-
-function renderCategories(){document.getElementById('categories').innerHTML=categories.map(([name,emo])=>`<button class="category" onclick="showCreate('${name.replaceAll("'","\\'")}')"><span class="emo">${emo}</span><strong>${name}</strong></button>`).join('')}
-function renderChips(){document.getElementById('chips').innerHTML=categories.slice(0,8).map(([name,emo])=>`<button class="chip ${selectedCategory===name?'active':''}" onclick="selectedCategory='${name.replaceAll("'","\\'")}';renderChips()">${emo} ${name.split(' & ')[0]}</button>`).join('')}
-
-function extractName(idea){const m=idea.match(/(?:called|named)\s+([A-Z][A-Za-z0-9 &'’-]{2,32})/);return m?m[1].trim().replace(/[.,]$/,''):'My Guyana Business'}
-function inferCategory(idea){const s=idea.toLowerCase();const tests=[['Agriculture & Farming',['farm','crop','agri','vegetable','livestock']],['Food & Catering',['food','cater','restaurant','lunch','bakery','snack']],['Retail & Trading',['retail','shop','store','sell','trading']],['Beauty & Wellness',['beauty','salon','hair','nail','spa']],['Construction & Building',['construction','building','contractor','masonry']],['Transportation & Logistics',['transport','taxi','bus','delivery','logistics']],['Tourism & Hospitality',['tour','hotel','guest','travel','resort']],['Technology & Digital Services',['tech','software','website','computer','digital','it service']],['Fisheries & Marine',['fish','fishing','marine','seafood']],['Manufacturing & Processing',['manufactur','process','factory','production']],['Professional Services',['consult','account','legal','training','professional']],['Creative & Other Services',['design','print','photo','creative','art']]];for(const [cat,keys] of tests)if(keys.some(k=>s.includes(k)))return cat;return selectedCategory}
-
-function generatePlan(){
- const idea=document.getElementById('idea').value.trim(); if(idea.length<18){toast('Please describe your business idea first.');return}
- const cat=inferCategory(idea); selectedCategory=cat; const preset=sectorPresets[cat]||sectorPresets['Professional Services'];
- const funding=Math.max(100000,parseInt((document.getElementById('amount').value||'1500000').replace(/\D/g,''))||1500000);
- const name=document.getElementById('businessName').value.trim()||extractName(idea);
- const startup=Math.round(funding*.47), equipment=Math.round(funding*.28), working=Math.round(funding*.25);
- const baseSales=Math.max(220000,Math.round(funding*.29)); const months=[];let cumulative=0;
- for(let i=1;i<=12;i++){const season=1+((i===11||i===12)?0.12:0);const sales=Math.round(baseSales*Math.pow(1+preset.growth,i-1)*season);const profit=Math.round(sales*preset.margin);cumulative+=profit;months.push({i,sales,profit})}
- const jobs=Math.max(1,Math.min(12,Math.round(funding/650000)));
- const plan={id:Date.now(),name,idea,cat,funding,startup,equipment,working,months,jobs,margin:preset.margin,customers:preset.customers,created:new Date().toISOString()};currentPlan=plan;savePlan(plan);renderPlan(plan);go('plan');toast('Business plan created and saved.');
-}
-function savePlan(plan){let arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');arr=arr.filter(p=>p.id!==plan.id);arr.unshift(plan);localStorage.setItem('gbpb_plans',JSON.stringify(arr.slice(0,30)))}
-function renderPlan(p){
- const first=p.months[0], last=p.months[p.months.length-1];
- document.getElementById('planContent').innerHTML=`
- <div class="plan-title"><div class="crumb">← Home &nbsp; • &nbsp; Guyana Business Plan Builder</div><h1>${esc(p.name)}</h1><small>${esc(p.cat)} • Guyana</small></div>
- <div class="plan-card"><h3>Executive Summary</h3><p>${esc(p.name)} is a Guyana-focused ${p.cat.toLowerCase()} venture built around this idea: ${esc(p.idea)} The plan prioritises a clear customer offer, disciplined startup spending, reliable service and repeat business.</p><div class="metrics"><div class="metric"><span>Estimated startup funding</span><b>${money(p.funding)}</b></div><div class="metric"><span>Illustrative year-1 sales</span><b>${money(p.months.reduce((a,m)=>a+m.sales,0))}</b></div><div class="metric"><span>Potential jobs</span><b>${p.jobs}</b></div><div class="metric"><span>Planning margin</span><b>${Math.round(p.margin*100)}%</b></div></div></div>
- <div class="plan-card"><h3>Business Opportunity</h3><p>The business can compete by combining local knowledge, responsive customer service and a focused offer. Its core target customers are ${esc(p.customers)}. Early validation should come from direct customer conversations, small pilot sales and tracking which products or services generate repeat demand.</p></div>
- <div class="plan-card"><h3>Marketing & Sales Strategy</h3><p>Use Facebook, WhatsApp, Instagram, referrals, community visibility and partnerships to generate leads. Keep pricing simple, publish clear contact information, collect customer reviews and use introductory offers without permanently lowering margins. Track enquiries, conversion rate and repeat customers every month.</p></div>
- <div class="plan-card"><h3>Operations</h3><p>Start with a lean workflow: secure required supplies and equipment, document daily tasks, maintain simple stock and cash records, and schedule purchases around actual demand. Separate business funds from personal spending and keep invoices, receipts and customer records organised from day one.</p></div>
- <div class="plan-card"><h3>Funding Requirement</h3><p>Total illustrative funding requirement: <strong>${money(p.funding)}</strong>.</p>
-   ${bar('Startup / setup',p.startup,p.funding)}${bar('Equipment / tools',p.equipment,p.funding)}${bar('Working capital',p.working,p.funding)}
- </div>
- <div class="plan-card"><h3>12-Month Financial Outlook</h3><p>This projection is a planning model, not a guarantee. It assumes gradual customer growth and the planning margin selected for the business type.</p><div class="monthlist">${p.months.map(m=>`<strong>Month ${m.i}</strong> — Sales ${money(m.sales)} • Estimated operating profit ${money(m.profit)}<br>`).join('')}</div><div class="metrics"><div class="metric"><span>Month 1 sales</span><b>${money(first.sales)}</b></div><div class="metric"><span>Month 12 sales</span><b>${money(last.sales)}</b></div></div></div>
- <div class="plan-card"><h3>SWOT Analysis</h3><div class="swot"><div><b>Strengths</b><p>Local focus, direct customer relationships, flexible decision-making and low overhead potential.</p></div><div><b>Weaknesses</b><p>New brand, limited initial capacity and dependence on disciplined cash flow.</p></div><div><b>Opportunities</b><p>Digital marketing, partnerships, underserved niches and repeat-customer growth.</p></div><div><b>Threats</b><p>Price competition, supplier changes, demand swings and unexpected operating costs.</p></div></div></div>
- <div class="plan-card"><h3>Implementation Plan</h3><p><strong>Weeks 1–2:</strong> validate demand, confirm suppliers and finalise pricing. <strong>Weeks 3–4:</strong> acquire essential equipment, set up records and brand assets. <strong>Month 2:</strong> launch a focused sales campaign and measure results. <strong>Months 3–6:</strong> improve the highest-performing offer, build repeat sales and add capacity only when demand supports it.</p></div>
- <div class="unlock"><h3>Professional Printable Plan</h3><p>${isUnlocked()?'Unlocked on this device. You can print or save to PDF.':'Unlock the professional printable layout and PDF-ready output.'}</p><button class="pay" onclick="${isUnlocked()?'printPlan()':'openPayment()'}">${isUnlocked()?'🖨 Print / Save PDF':'Unlock PDF • GYD $500'}</button></div>
- <button class="secondary print-hide" onclick="showCreate('${p.cat.replaceAll("'","\\'")}')">Edit / Create Another Plan</button>`;
-}
-function bar(label,val,total){return `<div class="barrow"><label><span>${label}</span><span>${money(val)}</span></label><div class="bar"><i style="width:${Math.max(6,val/total*100)}%"></i></div></div>`}
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function renderSaved(){const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const el=document.getElementById('savedList');if(!arr.length){el.innerHTML='<div class="saved-empty">📄<h3>No saved plans yet</h3><p>Create your first business plan and it will appear here.</p><button class="primary" onclick="showCreate()">Create a Plan</button></div>';return}el.innerHTML=arr.map(p=>`<div class="saved-card"><h3>${esc(p.name)}</h3><small>${esc(p.cat)} • ${new Date(p.created).toLocaleDateString()}</small><div class="row"><button class="smallbtn" onclick="openSaved(${p.id})">Open</button><button class="smallbtn" onclick="deleteSaved(${p.id})">Delete</button></div></div>`).join('')}
-function openSaved(id){const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const p=arr.find(x=>x.id===id);if(p){currentPlan=p;renderPlan(p);go('plan')}}
-function deleteSaved(id){let arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]').filter(x=>x.id!==id);localStorage.setItem('gbpb_plans',JSON.stringify(arr));renderSaved();toast('Plan deleted.')}
-function isUnlocked(){return localStorage.getItem('gbpb_unlocked')==='1'}
-function openPayment(){document.getElementById('paymentModal').classList.add('show')}
-function closePayment(){document.getElementById('paymentModal').classList.remove('show')}
-function demoUnlock(){localStorage.setItem('gbpb_unlocked','1');closePayment();updateSettings();if(currentPlan)renderPlan(currentPlan);toast('Professional plan unlocked on this device.')}
-function updateSettings(){const yes=isUnlocked();document.getElementById('unlockStatus').textContent=yes?'Professional printing is enabled':'Not unlocked';document.getElementById('unlockBadge').textContent=yes?'Unlocked':'Locked'}
-function printPlan(){try{Android.printPlan()}catch(e){window.print()}}
-
-const tipData=[['💵','Know your numbers','Separate startup costs, monthly operating costs and working capital. Keep a cash buffer rather than spending the full funding amount immediately.'],['🎯','Define one clear customer','A plan becomes stronger when it states exactly who is expected to buy, why they need the offer and how you will reach them.'],['📣','Use low-cost channels first','WhatsApp, Facebook, referrals and partnerships can validate demand before you spend heavily on advertising.'],['🧾','Keep records from day one','Track every sale and expense. Good records help with pricing, cash flow, tax preparation and financing conversations.'],['📦','Buy inventory from demand','Avoid tying up too much cash in stock. Start lean, measure what sells and restock around real demand.'],['🤝','Build repeat customers','Follow up, ask for feedback and make it easy for satisfied customers to buy again or refer someone else.']];
-function renderTips(){document.getElementById('tips').innerHTML=tipData.map(([e,h,p])=>`<div class="tip"><b>${e}</b><h3>${h}</h3><p>${p}</p></div>`).join('')}
-renderCategories();renderChips();renderTips();updateSettings();
-</script>
+<script src="app.js"></script>
 </body>
 </html>

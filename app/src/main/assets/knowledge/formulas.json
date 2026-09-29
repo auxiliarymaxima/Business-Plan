@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "currency": "GYD",
+  "formulas": {
+    "gross_profit": "revenue - cost_of_goods_sold",
+    "gross_margin_pct": "gross_profit / revenue * 100",
+    "contribution_per_unit": "unit_price - unit_variable_cost",
+    "break_even_units": "fixed_costs / contribution_per_unit",
+    "monthly_cash_flow": "cash_inflows - cash_outflows",
+    "funding_gap": "startup_costs + opening_working_capital - owner_contribution - confirmed_other_funding",
+    "employer_nis_planning": "min(gross_monthly_pay, current_insurable_ceiling) * employer_rate"
+  },
+  "rules": [
+    "The app performs arithmetic deterministically; the language model should not invent calculation inputs.",
+    "Current tax, NIS, wage, licence and financing parameters must come from dated curated facts or be marked VERIFY."
+  ]
+}
