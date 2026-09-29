@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android App
 
 on:
   workflow_dispatch:
@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HAS_RELEASE_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,8 +28,37 @@ jobs:
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
 
-      - name: Upload APK
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Guyana-Business-Plan-Builder-v4-debug
+          name: Guyana-Business-Plan-Builder-v5-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Prepare release signing key
+        if: env.HAS_RELEASE_KEY == 'true'
+        shell: bash
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
+
+      - name: Build signed release APK and AAB
+        if: env.HAS_RELEASE_KEY == 'true'
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: gradle --no-daemon assembleRelease bundleRelease
+
+      - name: Upload signed release APK
+        if: env.HAS_RELEASE_KEY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Guyana-Business-Plan-Builder-v5-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload signed release AAB
+        if: env.HAS_RELEASE_KEY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Guyana-Business-Plan-Builder-v5-release-aab
+          path: app/build/outputs/bundle/release/app-release.aab

@@ -1,434 +1,910 @@
 {
-  "name": "Guyana Business Plan Offline Knowledge Pack",
-  "version": "4.0-2026-09-28",
+  "name": "Guyana Business Plan Knowledge Pack",
+  "version": "5.0-2026-09-28",
   "updated": "2026-09-28",
-  "purpose": "Local retrieval context for on-device business-plan generation. Regulatory facts are dated and require periodic review.",
+  "purpose": "Offline retrieval pack for Guyana-focused business-plan generation. Designed to be replaced and expanded in future app versions.",
   "chunks": [
     {
-      "id": "gra_tin_2026",
-      "title": "GRA Taxpayer Identification Number (TIN)",
+      "id": "country.market_snapshot",
+      "title": "Guyana market snapshot",
       "tags": [
-        "all",
-        "registration",
-        "tax",
-        "gra"
+        "population",
+        "inflation",
+        "regions",
+        "market",
+        "country"
       ],
       "priority": 5,
       "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "GRA states that a TIN is a unique number issued to taxpayers. Before applying, determine whether the business will operate as a sole trader, partnership or company. The published first-application fee is GYD 1,000. Sole traders can use an Individual TIN to register a Business TIN.",
-      "source": "Guyana Revenue Authority",
-      "url": "https://gra.gov.gy/quick-links-2/start-your-business/apply-for-tin/"
+      "text": "Guyana uses the Guyana dollar (GYD). The 2022 national population and housing census counted 878,674 people on census night. The Bureau of Statistics reported that 87.16% of the preliminary census population lived in coastal regions. For planning, location matters: Region 4 (Demerara-Mahaica) is the most densely populated region, while interior regions are much more sparsely populated. The ten administrative regions are Barima-Waini; Pomeroon-Supenaam; Essequibo Islands-West Demerara; Demerara-Mahaica; Mahaica-Berbice; East Berbice-Corentyne; Cuyuni-Mazaruni; Potaro-Siparuni; Upper Takutu-Upper Essequibo; and Upper Demerara-Berbice.\n\nIn August 2026, the Georgetown CPI was 153.33, with 12-month point-to-point inflation of 3.6% and 12-month average inflation of 3.5%. Use these as a dated macroeconomic reference only, not as an automatic price escalator. A business plan should ask the user for current local supplier prices and wage quotes wherever possible.",
+      "source": "Bureau of Statistics",
+      "url": "https://statisticsguyana.gov.gy/census/",
+      "reviewDays": 90
     },
     {
-      "id": "gra_income_tax_2026",
-      "title": "2026 individual income-tax planning reference",
+      "id": "registration.business_name",
+      "title": "Business name registration",
       "tags": [
-        "all",
+        "business name",
+        "sole trader",
+        "partnership",
+        "DCRA",
+        "registration"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "A sole trader or partnership trading under a business name in Guyana generally registers that name with the Deeds and Commercial Registries Authority (DCRA). Current Government/DCRA information lists a new business-name application fee of GYD 5,000, renewal of GYD 2,500, Statement of Change of GYD 2,000, and a current processing time of about 7 working days. Typical required items include the completed application, identity document, TIN certificate and fee. The registration must be renewed when due, changes should be filed, and discontinuance should be notified when the business stops trading.\n\nDo not tell a user that a business-name registration creates a separate legal company. A sole trader remains legally distinct from an incorporated company structure.",
+      "source": "Deeds and Commercial Registries Authority",
+      "url": "https://dcraguyana.org/registering-a-business/",
+      "reviewDays": 90
+    },
+    {
+      "id": "registration.company",
+      "title": "Company incorporation",
+      "tags": [
+        "company",
+        "incorporation",
+        "DCRA",
+        "legal structure",
+        "registration"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "A company is incorporated under the Companies Act through the DCRA. Current official guidance lists Articles of Incorporation, director/secretary notices and consents, registered-office notice, declaration of compliance, name search/reservation, and identity documents among the required items. The published basic fees are GYD 60,000 prescribed incorporation fee, GYD 3,200 for notices and GYD 350 mandatory copy, totalling GYD 63,550. The stated processing time is about 3 working days once a complete application is accepted. Companies have continuing obligations such as annual returns, financial statements, beneficial-ownership declarations, and notifications of changes.",
+      "source": "Deeds and Commercial Registries Authority",
+      "url": "https://dcraguyana.com/companies1/",
+      "reviewDays": 90
+    },
+    {
+      "id": "registration.tin",
+      "title": "TIN and tax registration",
+      "tags": [
+        "TIN",
+        "GRA",
+        "tax registration",
+        "registration"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "Businesses need a Taxpayer Identification Number (TIN) relationship with the Guyana Revenue Authority. GRA guidance for an individual business notes that a sole trader can use the individual's TIN to register for a Business TIN rather than obtaining a company TIN. Supporting information can include identity, proof of address, business registration, and projected financial statements. The current published fee for a new TIN certificate is GYD 1,000. Treat the TIN as a compliance prerequisite in a plan whenever the business will transact formally, hire, seek SBB support, import, or file taxes.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://www.gra.gov.gy/wp-content/uploads/2024/10/Individual-Business-TIN_Revised-2024.pdf",
+      "reviewDays": 180
+    },
+    {
+      "id": "tax.vat",
+      "title": "VAT rules for planning",
+      "tags": [
+        "VAT",
         "tax",
+        "threshold",
+        "invoice",
+        "tax"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "The standard VAT rate in Guyana is 14% unless a supply is exempt or zero-rated. Mandatory VAT registration generally applies when taxable activity equals or exceeds GYD 15,000,000 over a 12-month period, exceeds that amount in less than 12 months, or is expected to exceed it during the next 12 months. Businesses below the threshold may apply for voluntary registration subject to GRA criteria. Only a VAT-registered person should charge VAT. VAT-registered businesses must issue appropriate tax invoices for taxable supplies.\n\nWhen building projections, never add 14% VAT blindly. First classify the product/service as standard-rated, zero-rated, exempt or out of scope. If uncertain, mark the VAT treatment as 'verify with GRA'.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/tax-services/vat-services/how-to-calculate-vat/",
+      "reviewDays": 90
+    },
+    {
+      "id": "tax.individual_2026",
+      "title": "Individual and self-employed income tax — 2026",
+      "tags": [
+        "income tax",
+        "self-employed",
+        "2026",
+        "GRA",
+        "tax"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "For 2026, the annual personal deduction is GYD 1,680,000 or one-third of qualifying income from all sources, whichever is greater. Chargeable income up to GYD 3,360,000 is taxed at 25%; chargeable income above that ceiling is taxed at 35%. The GRA also publishes deductions/allowances for NIS, qualifying medical/life insurance, children under 18, second-job income and overtime. For business-plan projections, calculate business profit first; owner tax should then be estimated separately and labelled as an estimate rather than treated as an operating expense unless the accounting treatment calls for it.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/notice-to-employers-employees-self-employed-persons-revised-personal-allowance-and-deductions-for-income-tax-2026/",
+      "reviewDays": 90
+    },
+    {
+      "id": "tax.corporation",
+      "title": "Corporation tax",
+      "tags": [
+        "corporation tax",
+        "company",
+        "GRA",
+        "tax"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "GRA currently publishes corporation-tax rates of 45% of chargeable profits for telephone companies, 40% for commercial companies other than telephone companies, and 25% for other companies. A company conducting both commercial and non-commercial activities can face dual rates. GRA also states that where corporation tax paid by a commercial company is less than 2% of turnover, a 2% turnover tax can apply. The legal classification of 'commercial' versus other activity matters, so a plan should flag the rate for confirmation with GRA or a tax professional rather than assuming every incorporated business is automatically taxed at 40%.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/quick-links-2/rates-calculations/",
+      "reviewDays": 90
+    },
+    {
+      "id": "tax.filing",
+      "title": "Key tax filing dates",
+      "tags": [
+        "filing",
+        "deadlines",
+        "tax calendar",
+        "tax"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "Individual income-tax and corporation-tax returns are generally due by April 30 for the relevant year of assessment, subject to next-business-day treatment where applicable. GRA publishes corporate advance-tax due dates of March 15, June 15, September 15 and December 15. A business plan should include a compliance calendar and cash reserve for tax payments rather than assuming taxes are paid only once at year-end.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://www.gra.gov.gy/quick-links-2/file-corporation-tax-return/",
+      "reviewDays": 180
+    },
+    {
+      "id": "employment.nis",
+      "title": "National Insurance Scheme (NIS)",
+      "tags": [
+        "NIS",
         "payroll",
-        "finance"
+        "employee",
+        "employer",
+        "employment"
       ],
       "priority": 5,
       "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "For 2026, GRA publishes an annual personal deduction of GYD 1,680,000 or one-third of qualifying income, whichever is greater. Chargeable income up to GYD 3,360,000 annually is taxed at 25%, with the balance above that amount at 35%. Use these figures only for 2026 and verify after the review date.",
-      "source": "Guyana Revenue Authority",
-      "url": "https://gra.gov.gy/notice-to-employers-employees-self-employed-persons-revised-personal-allowance-and-deductions-for-income-tax-2026/"
+      "text": "For employed contributors, total NIS contributions are 14% of insurable earnings: 5.6% deducted from the employee and 8.4% paid by the employer. The published insurable-earnings ceiling is GYD 280,000 per month or GYD 64,615 per week. Self-employed persons contribute 12.5% of declared income. Payroll projections should include the employer's 8.4% NIS cost up to the applicable ceiling; the employee contribution is a payroll deduction rather than an additional employer cost.",
+      "source": "National Insurance Scheme",
+      "url": "https://www.nis.org.gy/information_on_contributions",
+      "reviewDays": 90
     },
     {
-      "id": "gra_vat_2026",
-      "title": "VAT registration threshold and rate",
+      "id": "employment.labour",
+      "title": "Wages, hours, overtime and leave",
       "tags": [
-        "all",
-        "tax",
-        "vat",
-        "retail",
-        "food",
-        "services"
+        "minimum wage",
+        "overtime",
+        "leave",
+        "labour",
+        "employment"
       ],
       "priority": 5,
       "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "GRA states that mandatory VAT registration generally applies when taxable activity equals or exceeds GYD 15,000,000 over the relevant 12-month tests. The standard VAT rate is 14%. A business must be registered before charging VAT. Verify the treatment of the business's specific supplies because some supplies can be exempt or zero-rated.",
-      "source": "Guyana Revenue Authority",
-      "url": "https://gra.gov.gy/tax-services/vat-services/register-for-vat/"
+      "text": "The Ministry of Labour's currently published national minimum wage is GYD 347 hourly, GYD 2,776 daily, GYD 13,880 weekly and GYD 60,147 monthly, effective from 1 July 2022. The Ministry's overtime/leave guidance states a normal work week of 40 hours over no more than 5 days, normally 8 hours per day. Work beyond normal hours generally attracts at least 1.5 times the normal rate; special rules can apply to factories and public holidays. Minimum paid leave for weekly, fortnightly or monthly workers is one day for each completed month of employment; daily/hourly formulas differ.\n\nBecause wage orders can change, tag this fact as time-sensitive and verify before a plan is submitted to a lender or used for hiring.",
+      "source": "Ministry of Labour and Manpower Planning",
+      "url": "https://labour.gov.gy/wp-content/uploads/2024/07/The-National-Minimum-Wage-Flyer-1-1.pdf",
+      "reviewDays": 90
     },
     {
-      "id": "nis_contributions",
-      "title": "NIS contribution planning reference",
+      "id": "sbb.definition",
+      "title": "Small Business Bureau definition",
       "tags": [
-        "all",
-        "payroll",
-        "staffing",
-        "nis",
-        "finance"
-      ],
-      "priority": 5,
-      "status": "CONFIRMED",
-      "reviewed": "2026-09-28",
-      "text": "NIS publishes a total employed-person contribution rate of 14%: 5.6% deducted from the employee and 8.4% paid by the employer, subject to the current insurable-earnings ceiling published by NIS. The NIS site currently lists a monthly ceiling of GYD 280,000. Verify before formal payroll use.",
-      "source": "National Insurance Scheme Guyana",
-      "url": "https://www.nis.org.gy/benefits_payable"
-    },
-    {
-      "id": "sbb_definition",
-      "title": "Small Business Bureau definition reference",
-      "tags": [
-        "all",
+        "SBB",
         "small business",
-        "funding",
-        "government procurement"
+        "eligibility",
+        "finance_support"
       ],
-      "priority": 4,
+      "priority": 5,
       "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "The Small Business Bureau currently describes a small business as employing no more than 25 persons, having gross annual revenue of no more than GYD 60 million, and total business assets of no more than GYD 20 million. Verify eligibility directly with SBB before relying on a programme.",
+      "text": "The Small Business Bureau (SBB) states that a small business must satisfy all three limits: no more than 25 employees, gross annual revenue no more than GYD 60 million, and total business assets no more than GYD 20 million. When generating a plan for an SBB applicant, explicitly test all three criteria and report whether the supplied figures appear to fit the SBB definition.",
       "source": "Small Business Bureau",
-      "url": "https://sbb.gov.gy/about/"
+      "url": "https://sbb.gov.gy/faq/",
+      "reviewDays": 180
     },
     {
-      "id": "sbb_procurement",
-      "title": "20% Government Procurement Programme",
+      "id": "sbb.loans",
+      "title": "SBB loan support and documents",
       "tags": [
-        "all",
-        "procurement",
-        "government",
-        "sales",
-        "professional services",
-        "construction"
+        "SBB",
+        "loan",
+        "credit guarantee",
+        "business plan",
+        "finance_support"
       ],
-      "priority": 4,
+      "priority": 5,
       "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "SBB describes a programme intended to facilitate 20% of Government procurement of goods, services and works from small businesses. Participation requires SBB registration and supporting documents such as TIN, compliance, NIS and business registration records. Treat procurement as an opportunity, not guaranteed revenue.",
+      "text": "SBB's Credit Guarantee Programme currently supports small-business development loans up to GYD 30 million through participating financial institutions. SBB publishes collateral coverage of up to 40% for first-time borrowers and up to 70% for repeat borrowers; its site advertises a 6% interest rate. Published eligibility/documentation includes SBB registration, business registration, ID, TIN, quotations or estimates for items to be financed, collateral information, GRA/NIS compliance, credit information, and a complete business plan for a startup or a business established less than 12 months. Treat lender approval as separate from SBB eligibility.",
       "source": "Small Business Bureau",
-      "url": "https://sbb.gov.gy/20-government-procurement/"
+      "url": "https://sbb.gov.gy/",
+      "reviewDays": 90
     },
     {
-      "id": "startup_costs",
-      "title": "Startup cost structure",
+      "id": "sbb.procurement",
+      "title": "Government procurement opportunity",
       "tags": [
-        "all",
-        "finance",
-        "funding",
-        "startup"
+        "government procurement",
+        "SBB",
+        "tenders",
+        "finance_support"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "The Small Business Procurement Programme is designed to facilitate 20% of Government procurement of goods, services and works from small businesses. SBB lists documents such as the procurement form, ID, TIN certificate, GRA compliance, NIS documentation and business registration. For a plan targeting government clients, include procurement readiness: formal registration, tax/NIS compliance, tender capacity, delivery standards, cash-flow needs while awaiting payment, and record keeping.",
+      "source": "Small Business Bureau",
+      "url": "https://sbb.gov.gy/20-government-procurement/",
+      "reviewDays": 180
+    },
+    {
+      "id": "investment.goinvest",
+      "title": "GO-Invest and incentives",
+      "tags": [
+        "GO-Invest",
+        "incentives",
+        "investment agreement",
+        "finance_support"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "GO-Invest facilitates local and foreign investment, provides sector information, and helps qualifying projects pursue fiscal incentives and investment agreements. GRA explains that investment agreements can support exemptions or zero-rating where a project and listed items qualify and the relevant approvals are obtained. Incentives are not automatic. A business plan should describe potential concessions as 'subject to eligibility and approval' and never reduce startup costs by an incentive unless the user confirms an approved concession or investment agreement.",
+      "source": "Guyana Office for Investment",
+      "url": "https://www.guyanainvest.gov.gy/invest",
+      "reviewDays": 180
+    },
+    {
+      "id": "permits.epa",
+      "title": "Environmental authorization",
+      "tags": [
+        "EPA",
+        "environment",
+        "permit",
+        "construction",
+        "industry",
+        "permits"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "Projects with potential environmental impacts—such as construction, industrial operations or resource extraction—may require Environmental Authorization from the EPA. An authorization may take the form of an environmental, construction, operating or prescribed-process permit depending on the project. Plans for manufacturing, mining, large agriculture, waste handling, energy, major construction or other potentially impactful activities should include an EPA screening/authorization checkpoint before operations begin.",
+      "source": "Environmental Protection Agency",
+      "url": "https://eservices.epa.gov.gy/permits",
+      "reviewDays": 180
+    },
+    {
+      "id": "permits.food",
+      "title": "Food businesses and food handlers",
+      "tags": [
+        "food",
+        "permit",
+        "restaurant",
+        "catering",
+        "processor",
+        "permits"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "Food businesses can face multiple requirements. The Guyana Food Safety Authority licenses food business operators, issues food-handler and street-food permits and inspects food premises. Food handlers need appropriate training/certification, and medical requirements may also apply. The Government Analyst Food and Drug Department (GA-FDD) inspects and licenses manufacturers/importers of regulated foods and publishes specific service fees. A restaurant, caterer, processor, beverage maker or food importer should have a compliance workstream rather than a generic 'business licence' line.",
+      "source": "Government of Guyana Portal / Guyana Food Safety Authority",
+      "url": "https://portal.gov.gy/agencies/guyana-food-safety-authority",
+      "reviewDays": 90
+    },
+    {
+      "id": "permits.food_fees",
+      "title": "Selected GA-FDD fees",
+      "tags": [
+        "food manufacturing",
+        "import",
+        "GA-FDD",
+        "fees",
+        "permits"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "GA-FDD's published Inspectorate price list includes: application/renewal of a licence to manufacture food — GYD 5,000; permit to manufacture/repackage foods — GYD 1,500; permit to import foods — GYD 20,000; food-handler permit processing — GYD 500; and certificate of free sale — GYD 5,000 per certificate. These are service-specific and should not be treated as a complete licensing budget. Verify current fees and which authority has jurisdiction before finalizing the plan.",
+      "source": "Government Analyst Food and Drug Department",
+      "url": "https://www.gafdd.gy/inspectorate/",
+      "reviewDays": 90
+    },
+    {
+      "id": "permits.fire",
+      "title": "Fire safety and LPG/petroleum",
+      "tags": [
+        "fire safety",
+        "LPG",
+        "premises",
+        "permit",
+        "permits"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "Certain business premises require Guyana Fire Service certification, including examples such as hotels, bars, liquor restaurants, sawmills, lumber yards, mechanical workshops and spare-parts stores. Fire-safety approval can involve building-plan/CH&PA or local-authority documentation and inspection. Businesses storing petroleum or LPG cylinders may need a separate storage licence and fire-safety inspection. Include fire-safety equipment, inspection and approval in the startup checklist where the premises or materials warrant it.",
+      "source": "Government of Guyana Portal / Guyana Fire Service",
+      "url": "https://portal.gov.gy/services/SVC-FAAA3F",
+      "reviewDays": 180
+    },
+    {
+      "id": "quality.gnbs",
+      "title": "Standards and quality systems",
+      "tags": [
+        "GNBS",
+        "standards",
+        "quality",
+        "manufacturing",
+        "operations"
+      ],
+      "priority": 5,
+      "status": "CONFIRMED",
+      "reviewed": "2026-09-28",
+      "text": "The Guyana National Bureau of Standards supports standards, metrology and business competitiveness. Depending on sector, a business may benefit from or need product/measurement compliance, calibration or recognised quality systems. For export, manufacturing, laboratories, construction materials or food production, the plan should ask whether GNBS standards, calibration or certification requirements apply and budget for testing/quality assurance where relevant.",
+      "source": "Guyana National Bureau of Standards",
+      "url": "https://gnbsgy.org/",
+      "reviewDays": 365
+    },
+    {
+      "id": "planning.structure",
+      "title": "Recommended Guyana business-plan structure",
+      "tags": [
+        "business plan",
+        "structure",
+        "SBB",
+        "lender",
+        "planning"
       ],
       "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Separate one-time setup costs from recurring operating costs. Common setup categories include registration, deposits, fit-out, tools and equipment, initial inventory, branding, licences and contingency. Working capital should cover the gap before customer receipts become reliable."
+      "text": "Generate plans in this order: 1) cover and business identity; 2) executive summary; 3) problem/opportunity; 4) product/service and value proposition; 5) location and Guyana market context; 6) target customers; 7) competitor/alternative analysis; 8) marketing and sales; 9) operations and suppliers; 10) ownership/management and staffing; 11) registration, tax, NIS, permits and compliance; 12) startup budget and funding request; 13) pricing and unit economics; 14) 12-month sales and cash-flow forecast; 15) profit-and-loss summary; 16) break-even; 17) risks and mitigations; 18) implementation timeline; 19) funding use and repayment capacity if debt-funded; 20) assumptions and source notes.\n\nFor SBB or lender use, attach quotations/estimates and clearly distinguish confirmed amounts from assumptions.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "cash_flow",
+      "id": "planning.assumptions",
+      "title": "Assumption discipline",
+      "tags": [
+        "assumptions",
+        "hallucination",
+        "financials",
+        "planning"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "The local model must not invent current rent, wages above statutory minimum, supplier prices, loan interest rates, customs duties, electricity bills, competitor prices or sales volumes. When the user has not supplied a figure, use one of three states: CONFIRMED (user/document supplied), ESTIMATE (explicit planning assumption), or VERIFY (requires current external confirmation). Every financial table should carry an assumptions block. If a number materially drives profitability, ask the user for it before finalizing the plan whenever possible.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "planning.market_sizing",
+      "title": "Offline market sizing methods",
+      "tags": [
+        "market sizing",
+        "TAM",
+        "SAM",
+        "SOM",
+        "planning"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Without live search, size the market from user-provided or bundled data using transparent methods. Bottom-up: number of reachable customers × purchase frequency × average spend. Capacity-based: maximum jobs/units/rooms × realistic utilization × price. Location-based: households/businesses in the stated catchment × estimated penetration × spend. Contract-based: number of signed/probable contracts × value. Always show the formula and separate Total Addressable Market, Serviceable Available Market and realistic first-year target. Do not derive a market-share percentage from national population when the business serves only a village, region or niche.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "planning.pricing",
+      "title": "Pricing framework",
+      "tags": [
+        "pricing",
+        "margin",
+        "unit economics",
+        "planning"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Evaluate pricing from three angles: cost floor, competitor/customer reference supplied by the user, and value delivered. Calculate unit variable cost, contribution per unit, contribution margin percentage and required sales volume. For services, include labour hours, transport, consumables and rework. For retail, include landed purchase cost, shrinkage and payment charges. For food, include yield/waste and packaging. Never recommend a price solely by applying a generic markup; show how the proposed price covers costs and fits the target customer's willingness to pay.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "planning.cashflow",
       "title": "Cash-flow planning",
       "tags": [
-        "all",
-        "finance",
-        "cash flow"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "A profitable business can still run out of cash. Forecast when money is actually collected and when suppliers, wages, rent, transport, utilities, taxes and loan payments are actually paid. Keep a cash buffer and monitor the lowest cash point each month."
-    },
-    {
-      "id": "pricing",
-      "title": "Pricing and gross margin",
-      "tags": [
-        "all",
-        "pricing",
-        "finance",
-        "sales"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "Build prices from direct cost, overhead, target margin, customer willingness to pay and competitor context. Do not copy a competitor price without knowing whether it covers your own costs. Separate markup from margin when calculating profitability."
-    },
-    {
-      "id": "break_even",
-      "title": "Break-even planning",
-      "tags": [
-        "all",
-        "finance",
-        "break even"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "Break-even units equal fixed costs divided by contribution per unit, where contribution per unit is selling price minus variable cost per unit. If the contribution is zero or negative, the business cannot cover fixed costs at that price."
-    },
-    {
-      "id": "records_controls",
-      "title": "Records and internal controls",
-      "tags": [
-        "all",
-        "finance",
-        "operations"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "Keep business and personal money separate. Retain receipts and invoices, record every sale and expense, reconcile cash and bank balances, track debtors and creditors, and back up important records. These controls improve lending readiness and reduce leakage."
-    },
-    {
-      "id": "market_validation",
-      "title": "Validate demand before scaling",
-      "tags": [
-        "all",
-        "market",
-        "sales",
-        "customers"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "Use interviews, pre-orders, pilot sales, quotation requests and small test batches to validate demand before committing to large fixed costs. Record what customers actually buy, not only what they say they like."
-    },
-    {
-      "id": "digital_marketing",
-      "title": "Low-cost customer acquisition",
-      "tags": [
-        "all",
-        "marketing",
-        "sales"
-      ],
-      "priority": 3,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "For many Guyanese SMEs, practical low-cost channels can include WhatsApp, Facebook, Instagram, referrals, community visibility, partnerships and repeat-customer follow-up. Track enquiries, conversions, acquisition cost and repeat purchase rate."
-    },
-    {
-      "id": "risk_register",
-      "title": "Business risk register",
-      "tags": [
-        "all",
-        "risk",
-        "operations"
-      ],
-      "priority": 2,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "List the main risks, their likelihood and impact, early warning signs, mitigation actions and responsible person. Common SME risks include supplier disruption, cash shortages, equipment failure, staff absence, demand swings, theft, weather and regulatory changes."
-    },
-    {
-      "id": "funding_readiness",
-      "title": "Lender and investor readiness",
-      "tags": [
-        "all",
+        "cash flow",
+        "working capital",
         "funding",
-        "loan",
-        "finance"
+        "planning"
       ],
       "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "A funding request should explain exactly how much is needed, what each portion will purchase, how the spending increases capacity or revenue, the owner's contribution, expected cash generation and how repayment would be supported. Avoid presenting optimistic sales as guaranteed."
+      "text": "A profitable business can still fail from cash shortage. Build monthly cash flow with opening cash, cash sales, collections from credit sales, owner capital/loan inflows, operating payments, inventory purchases, payroll including employer NIS, rent/utilities, tax/VAT payments where applicable, debt service and capital purchases. Track closing cash and identify the lowest cash month. Funding need should cover startup capital plus the maximum projected cash deficit, not just equipment purchases.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "agriculture_playbook",
-      "title": "Agriculture and farming playbook",
+      "id": "planning.break_even",
+      "title": "Break-even analysis",
       "tags": [
-        "agriculture",
-        "farming"
+        "break-even",
+        "contribution margin",
+        "planning"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Plan land access, water, drainage, planting cycles, inputs, labour, storage, spoilage, transport and buyer arrangements. Model weather and yield downside cases. Validate off-take with markets, wholesalers, restaurants, processors or direct consumers before expanding acreage."
+      "text": "Break-even units = monthly fixed costs ÷ contribution per unit, where contribution per unit = selling price − variable cost per unit. Break-even revenue = fixed costs ÷ contribution margin ratio. For mixed products, use a weighted-average contribution margin based on the expected sales mix. If contribution is zero or negative, stop and flag the pricing/cost structure rather than producing a meaningless break-even figure.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "food_playbook",
-      "title": "Food and catering playbook",
+      "id": "planning.scenarios",
+      "title": "Scenario analysis",
       "tags": [
-        "food",
-        "catering",
-        "restaurant",
-        "bakery"
+        "scenario",
+        "forecast",
+        "risk",
+        "planning"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Track ingredient cost per serving, packaging, fuel, labour, spoilage and delivery separately. Standardise recipes and portions. Include food-safety, premises, environmental-health and other licence checks as VERIFY items unless confirmed for the exact operation."
+      "text": "Produce at least three scenarios when the plan depends on uncertain demand: conservative, base and upside. Change only key drivers such as units sold, occupancy, average order value, raw-material cost or collection delay. Do not arbitrarily change every line. Report revenue, gross profit, operating profit, closing cash and break-even timing for each scenario. The base case should be plausible, not automatically the midpoint.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "retail_playbook",
-      "title": "Retail and trading playbook",
+      "id": "sector.01",
+      "title": "Agriculture & Farming",
       "tags": [
-        "retail",
-        "trading",
-        "shop",
-        "store"
+        "agriculture & farming",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Plan opening inventory by fast-, medium- and slow-moving items. Track gross margin, stock turns, shrinkage, supplier lead time and cash tied up in stock. Avoid using all startup capital on inventory before demand is proven."
+      "text": "Use this playbook when the user's primary sector is Agriculture & Farming.\nRevenue drivers: crop/livestock output, acreage, yield, cycles, farm-gate price.\nCost drivers: seed/stock, feed/fertiliser, labour, irrigation, fuel, transport, loss/spoilage.\nCompliance questions: land tenure, drainage/irrigation, biosecurity, EPA where relevant, food safety for processed output.\nKey performance indicators: yield per acre/animal, mortality/loss rate, cost per kg/unit, gross margin, harvest cycle.\nCommon risks to test: weather/flooding, pests/disease, input price volatility, market access.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "beauty_playbook",
-      "title": "Beauty and wellness playbook",
+      "id": "sector.02",
+      "title": "Food & Catering",
       "tags": [
-        "beauty",
-        "wellness",
-        "salon",
-        "barber"
+        "food & catering",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Plan service time, staff or chair capacity, consumables per service, appointment utilisation, repeat-booking rate and hygiene controls. Separate high-margin services from retail product sales when forecasting."
+      "text": "Use this playbook when the user's primary sector is Food & Catering.\nRevenue drivers: orders/day, average ticket, event contracts, seating/throughput.\nCost drivers: ingredients, packaging, kitchen labour, LPG/electricity, rent, delivery, waste.\nCompliance questions: food-handler permits, food-business licensing/inspection, fire safety, GA-FDD/GFSA requirements.\nKey performance indicators: food cost %, waste %, orders/day, average ticket, table/order turnaround, repeat customers.\nCommon risks to test: food safety, spoilage, supplier shortages, demand swings, price inflation.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "construction_playbook",
-      "title": "Construction and building playbook",
+      "id": "sector.03",
+      "title": "Retail & Trading",
       "tags": [
-        "construction",
-        "building",
-        "contractor"
+        "retail & trading",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Price jobs from materials, labour, transport, equipment hire, wastage, supervision, contingency and profit. Manage deposits and stage payments to avoid financing the client's project from your own cash. Use written scope and change-order controls."
+      "text": "Use this playbook when the user's primary sector is Retail & Trading.\nRevenue drivers: transactions/day, average basket, SKU mix, wholesale/retail contracts.\nCost drivers: inventory landed cost, freight, rent, staffing, shrinkage, payment fees.\nCompliance questions: business/TIN/VAT, import permits or standards where applicable.\nKey performance indicators: gross margin, inventory turnover, average basket, stockout rate, shrinkage, days inventory.\nCommon risks to test: slow stock, FX/import cost, theft/shrinkage, supplier concentration, credit risk.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "transport_playbook",
-      "title": "Transportation and logistics playbook",
+      "id": "sector.04",
+      "title": "Beauty & Wellness",
       "tags": [
-        "transportation",
-        "logistics",
-        "delivery",
-        "taxi"
+        "beauty & wellness",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Forecast fuel, maintenance, tyres, insurance, licensing, downtime and driver costs. Track revenue per trip or delivery, utilisation, empty return trips and vehicle replacement reserve."
+      "text": "Use this playbook when the user's primary sector is Beauty & Wellness.\nRevenue drivers: appointments/day, service mix, product sales, memberships.\nCost drivers: staff/commission, products, rent, utilities, laundry, equipment.\nCompliance questions: professional/health requirements as applicable, fire/premises, business/TIN/VAT.\nKey performance indicators: utilization, average service ticket, rebooking rate, product attachment rate, labour %.\nCommon risks to test: staff retention, hygiene, reputation, seasonality, imported product costs.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "tourism_playbook",
-      "title": "Tourism and hospitality playbook",
+      "id": "sector.05",
+      "title": "Construction & Building",
       "tags": [
-        "tourism",
-        "hospitality",
-        "hotel",
-        "tour"
+        "construction & building",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Model occupancy or booking volume, seasonality, commissions, cleaning, utilities, transport, guest safety and review scores. Define the target traveller and distribution channels rather than assuming constant occupancy."
+      "text": "Use this playbook when the user's primary sector is Construction & Building.\nRevenue drivers: projects, contract value, billable crews/days, material markups.\nCost drivers: materials, subcontractors, labour, transport, equipment hire, insurance, rework.\nCompliance questions: contracts, OSH, EPA/building approvals where relevant, tax/contractor withholding.\nKey performance indicators: gross margin by project, labour productivity, variation orders, receivable days, backlog.\nCommon risks to test: cost overruns, late payment, weather, scope changes, safety incidents.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "technology_playbook",
-      "title": "Technology and digital services playbook",
+      "id": "sector.06",
+      "title": "Transportation & Logistics",
       "tags": [
-        "technology",
-        "digital",
-        "software",
-        "it service",
-        "app"
+        "transportation & logistics",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Define the service package, scope boundaries, recurring versus one-off revenue, support commitments, hosting/software costs, data protection controls and delivery capacity. Use deposits or milestones for project work."
+      "text": "Use this playbook when the user's primary sector is Transportation & Logistics.\nRevenue drivers: trips/day, route fares, delivery jobs, contracted routes.\nCost drivers: fuel, drivers, maintenance, tyres, insurance, licences, finance, downtime.\nCompliance questions: vehicle/licensing, insurance, fire/LPG if applicable, customs for freight segments.\nKey performance indicators: revenue/km, cost/km, load factor, on-time rate, downtime, fuel %.\nCommon risks to test: fuel prices, breakdowns, accidents, weak utilization, delayed payments.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "fisheries_playbook",
-      "title": "Fisheries and marine playbook",
+      "id": "sector.07",
+      "title": "Tourism & Hospitality",
       "tags": [
-        "fisheries",
-        "marine",
-        "fish",
-        "seafood"
+        "tourism & hospitality",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Plan vessel or landing access, fuel, ice/cold chain, gear, crew, spoilage, storage, transport and buyer arrangements. Forecast catch and price variability rather than using one optimistic average."
+      "text": "Use this playbook when the user's primary sector is Tourism & Hospitality.\nRevenue drivers: room nights, occupancy, ADR, tours, F&B spend.\nCost drivers: staff, utilities, laundry, food, maintenance, booking commissions, transport.\nCompliance questions: tourism licensing/classification where applicable, fire safety, food safety, EPA for some projects.\nKey performance indicators: occupancy, ADR, RevPAR, tour load factor, guest spend, review score.\nCommon risks to test: seasonality, airlift/demand shocks, maintenance, service quality, weather.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "manufacturing_playbook",
-      "title": "Manufacturing and processing playbook",
+      "id": "sector.08",
+      "title": "Technology & Digital Services",
       "tags": [
-        "manufacturing",
-        "processing",
-        "factory"
+        "technology & digital services",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Map raw materials, yield, waste, labour, power, maintenance, packaging, quality checks, batch capacity and working capital. Calculate unit economics at realistic utilisation, not only full capacity."
+      "text": "Use this playbook when the user's primary sector is Technology & Digital Services.\nRevenue drivers: projects/month, retainers, subscriptions, billable hours.\nCost drivers: labour, software/cloud, internet, devices, marketing, payment fees.\nCompliance questions: business/TIN/VAT, data/privacy/sector licences where applicable.\nKey performance indicators: MRR, billable utilization, project margin, churn, CAC, recurring revenue share.\nCommon risks to test: scope creep, client concentration, skills gaps, downtime, cybersecurity.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "professional_services_playbook",
-      "title": "Professional services playbook",
+      "id": "sector.09",
+      "title": "Fisheries & Marine",
+      "tags": [
+        "fisheries & marine",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Fisheries & Marine.\nRevenue drivers: catch/harvest volume, price/kg, processing yield, contracts.\nCost drivers: fuel, ice, feed, vessel maintenance, labour, cold storage, packaging, transport.\nCompliance questions: fisheries permits, food safety, cold-chain, EPA where relevant.\nKey performance indicators: kg/trip, survival/yield, fuel/kg, spoilage, price/kg, gross margin.\nCommon risks to test: weather, stock health, fuel, spoilage, regulatory closures, export requirements.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.10",
+      "title": "Manufacturing & Processing",
+      "tags": [
+        "manufacturing & processing",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Manufacturing & Processing.\nRevenue drivers: units/hour/day, capacity utilization, wholesale contracts.\nCost drivers: raw materials, packaging, labour, power, maintenance, QA, freight.\nCompliance questions: GA-FDD for regulated products, GNBS, EPA, fire, OSH, import/export requirements.\nKey performance indicators: OEE/capacity use, scrap %, yield, unit cost, defect rate, gross margin.\nCommon risks to test: machine downtime, power, raw material cost, quality failures, inventory buildup.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.11",
+      "title": "Professional Services",
       "tags": [
         "professional services",
-        "consulting",
-        "training"
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Professional Services.\nRevenue drivers: billable hours, engagements, retainers, success/project fees.\nCost drivers: professional labour, rent, software, travel, insurance, marketing.\nCompliance questions: professional licensing where applicable, TIN/VAT, confidentiality/data obligations.\nKey performance indicators: billable utilization, average fee, realization rate, client retention, receivable days.\nCommon risks to test: client concentration, collection delays, capacity bottlenecks, professional liability.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.12",
+      "title": "Creative & Other Services",
+      "tags": [
+        "creative & other services",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 3,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Creative & Other Services.\nRevenue drivers: projects, events, commissions, licensing, product sales.\nCost drivers: materials, labour, equipment, venue, transport, printing/platform fees.\nCompliance questions: copyright/permissions, business/TIN/VAT, venue/fire rules where applicable.\nKey performance indicators: average project value, utilization, revision hours, repeat rate, gross margin.\nCommon risks to test: scope creep, irregular demand, late payment, IP disputes, equipment failure.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "operations.import_export",
+      "title": "Import/export planning",
+      "tags": [
+        "import",
+        "export",
+        "landed cost",
+        "customs",
+        "operations"
       ],
       "priority": 5,
-      "status": "GUIDANCE",
+      "status": "CONFIRMED",
       "reviewed": "2026-09-28",
-      "text": "Forecast billable hours or projects, utilisation, collection time, subcontractors, software, travel and professional overhead. Clarify deliverables and payment milestones. Reputation, referrals and repeat contracts are key acquisition channels."
+      "text": "For an import-dependent business, calculate landed cost as supplier price plus international freight, insurance if applicable, customs duties/taxes that actually apply, local port/broker/transport costs, and expected loss/damage. Do not assume duty-free treatment. Some investments can qualify for concessions through GO-Invest/GRA, but only after eligibility and approval. For food imports, GA-FDD permits can apply; other regulated goods may need licences, standards or agency approvals. For export plans, include packaging/label standards, transport, documentation, payment terms and destination-market requirements.",
+      "source": "Guyana Revenue Authority",
+      "url": "https://gra.gov.gy/business/customs-and-trade/exemptions/investment-agreements/",
+      "reviewDays": 180
     },
     {
-      "id": "creative_services_playbook",
-      "title": "Creative and other services playbook",
+      "id": "operations.recordkeeping",
+      "title": "Record keeping and controls",
       "tags": [
-        "creative",
-        "design",
-        "printing",
-        "photography",
-        "events"
+        "records",
+        "bookkeeping",
+        "MMG",
+        "controls",
+        "operations"
       ],
-      "priority": 5,
+      "priority": 3,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Price for labour time, materials, revisions, equipment depreciation, travel and rush work. Use deposits and written approval checkpoints. Build a portfolio and measure enquiry-to-booking conversion."
+      "text": "Recommend basic controls appropriate to a small Guyanese business: separate business cash/bank/MMG activity from personal spending; numbered invoices/receipts; daily sales summary; purchase and expense records; inventory count where applicable; payroll and NIS records; tax/VAT files; supplier/customer balances; monthly bank reconciliation; and monthly profit/cash-flow review. For cash-heavy businesses, include till reconciliation and deposit controls. For mobile-money receipts, reconcile wallet transactions to invoices and settlement records.",
+      "source": "Curated planning guidance",
+      "url": "",
+      "reviewDays": 365
     },
     {
-      "id": "staffing_plan",
-      "title": "Staffing plan",
+      "id": "sector.01",
+      "title": "Agriculture & Farming",
       "tags": [
-        "all",
-        "staffing",
-        "payroll"
-      ],
-      "priority": 2,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "Start with roles required to deliver the offer safely and reliably. Distinguish owner labour from paid staff, include employer payroll costs, define responsibilities and add headcount only when demand and cash flow support it."
-    },
-    {
-      "id": "implementation_timeline",
-      "title": "Implementation timeline",
-      "tags": [
-        "all",
-        "timeline",
-        "launch"
-      ],
-      "priority": 2,
-      "status": "GUIDANCE",
-      "reviewed": "2026-09-28",
-      "text": "A practical launch sequence is: validate demand; confirm registration and licences; finalise supplier quotes and pricing; secure essential equipment; establish records; pilot the offer; launch marketing; review first-month results; then expand only what is working."
-    },
-    {
-      "id": "assumptions_policy",
-      "title": "Assumption and verification policy",
-      "tags": [
-        "all",
-        "verify",
-        "risk"
+        "agriculture & farming",
+        "sector playbook",
+        "operations",
+        "sector"
       ],
       "priority": 4,
       "status": "GUIDANCE",
       "reviewed": "2026-09-28",
-      "text": "Any current rent, supplier price, customs charge, loan rate, licence fee, grant, competitor price, demand statistic or regulatory requirement not present in the curated pack must be labelled ESTIMATE or VERIFY rather than stated as a fact."
+      "text": "Use this playbook when the user's primary sector is Agriculture & Farming.\nRevenue drivers: crop/livestock output, acreage, yield, cycles, farm-gate price.\nCost drivers: seed/stock, feed/fertiliser, labour, irrigation, fuel, transport, loss/spoilage.\nCompliance questions: land tenure, drainage/irrigation, biosecurity, EPA where relevant, food safety for processed output.\nKey performance indicators: yield per acre/animal, mortality/loss rate, cost per kg/unit, gross margin, harvest cycle.\nCommon risks to test: weather/flooding, pests/disease, input price volatility, market access.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.02",
+      "title": "Food & Catering",
+      "tags": [
+        "food & catering",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Food & Catering.\nRevenue drivers: orders/day, average ticket, event contracts, seating/throughput.\nCost drivers: ingredients, packaging, kitchen labour, LPG/electricity, rent, delivery, waste.\nCompliance questions: food-handler permits, food-business licensing/inspection, fire safety, GA-FDD/GFSA requirements.\nKey performance indicators: food cost %, waste %, orders/day, average ticket, table/order turnaround, repeat customers.\nCommon risks to test: food safety, spoilage, supplier shortages, demand swings, price inflation.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.03",
+      "title": "Retail & Trading",
+      "tags": [
+        "retail & trading",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Retail & Trading.\nRevenue drivers: transactions/day, average basket, SKU mix, wholesale/retail contracts.\nCost drivers: inventory landed cost, freight, rent, staffing, shrinkage, payment fees.\nCompliance questions: business/TIN/VAT, import permits or standards where applicable.\nKey performance indicators: gross margin, inventory turnover, average basket, stockout rate, shrinkage, days inventory.\nCommon risks to test: slow stock, FX/import cost, theft/shrinkage, supplier concentration, credit risk.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.04",
+      "title": "Beauty & Wellness",
+      "tags": [
+        "beauty & wellness",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Beauty & Wellness.\nRevenue drivers: appointments/day, service mix, product sales, memberships.\nCost drivers: staff/commission, products, rent, utilities, laundry, equipment.\nCompliance questions: professional/health requirements as applicable, fire/premises, business/TIN/VAT.\nKey performance indicators: utilization, average service ticket, rebooking rate, product attachment rate, labour %.\nCommon risks to test: staff retention, hygiene, reputation, seasonality, imported product costs.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.05",
+      "title": "Construction & Building",
+      "tags": [
+        "construction & building",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Construction & Building.\nRevenue drivers: projects, contract value, billable crews/days, material markups.\nCost drivers: materials, subcontractors, labour, transport, equipment hire, insurance, rework.\nCompliance questions: contracts, OSH, EPA/building approvals where relevant, tax/contractor withholding.\nKey performance indicators: gross margin by project, labour productivity, variation orders, receivable days, backlog.\nCommon risks to test: cost overruns, late payment, weather, scope changes, safety incidents.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.06",
+      "title": "Transportation & Logistics",
+      "tags": [
+        "transportation & logistics",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Transportation & Logistics.\nRevenue drivers: trips/day, route fares, delivery jobs, contracted routes.\nCost drivers: fuel, drivers, maintenance, tyres, insurance, licences, finance, downtime.\nCompliance questions: vehicle/licensing, insurance, fire/LPG if applicable, customs for freight segments.\nKey performance indicators: revenue/km, cost/km, load factor, on-time rate, downtime, fuel %.\nCommon risks to test: fuel prices, breakdowns, accidents, weak utilization, delayed payments.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.07",
+      "title": "Tourism & Hospitality",
+      "tags": [
+        "tourism & hospitality",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Tourism & Hospitality.\nRevenue drivers: room nights, occupancy, ADR, tours, F&B spend.\nCost drivers: staff, utilities, laundry, food, maintenance, booking commissions, transport.\nCompliance questions: tourism licensing/classification where applicable, fire safety, food safety, EPA for some projects.\nKey performance indicators: occupancy, ADR, RevPAR, tour load factor, guest spend, review score.\nCommon risks to test: seasonality, airlift/demand shocks, maintenance, service quality, weather.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.08",
+      "title": "Technology & Digital Services",
+      "tags": [
+        "technology & digital services",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Technology & Digital Services.\nRevenue drivers: projects/month, retainers, subscriptions, billable hours.\nCost drivers: labour, software/cloud, internet, devices, marketing, payment fees.\nCompliance questions: business/TIN/VAT, data/privacy/sector licences where applicable.\nKey performance indicators: MRR, billable utilization, project margin, churn, CAC, recurring revenue share.\nCommon risks to test: scope creep, client concentration, skills gaps, downtime, cybersecurity.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.09",
+      "title": "Fisheries & Marine",
+      "tags": [
+        "fisheries & marine",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Fisheries & Marine.\nRevenue drivers: catch/harvest volume, price/kg, processing yield, contracts.\nCost drivers: fuel, ice, feed, vessel maintenance, labour, cold storage, packaging, transport.\nCompliance questions: fisheries permits, food safety, cold-chain, EPA where relevant.\nKey performance indicators: kg/trip, survival/yield, fuel/kg, spoilage, price/kg, gross margin.\nCommon risks to test: weather, stock health, fuel, spoilage, regulatory closures, export requirements.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.10",
+      "title": "Manufacturing & Processing",
+      "tags": [
+        "manufacturing & processing",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Manufacturing & Processing.\nRevenue drivers: units/hour/day, capacity utilization, wholesale contracts.\nCost drivers: raw materials, packaging, labour, power, maintenance, QA, freight.\nCompliance questions: GA-FDD for regulated products, GNBS, EPA, fire, OSH, import/export requirements.\nKey performance indicators: OEE/capacity use, scrap %, yield, unit cost, defect rate, gross margin.\nCommon risks to test: machine downtime, power, raw material cost, quality failures, inventory buildup.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.11",
+      "title": "Professional Services",
+      "tags": [
+        "professional services",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Professional Services.\nRevenue drivers: billable hours, engagements, retainers, success/project fees.\nCost drivers: professional labour, rent, software, travel, insurance, marketing.\nCompliance questions: professional licensing where applicable, TIN/VAT, confidentiality/data obligations.\nKey performance indicators: billable utilization, average fee, realization rate, client retention, receivable days.\nCommon risks to test: client concentration, collection delays, capacity bottlenecks, professional liability.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
+    },
+    {
+      "id": "sector.12",
+      "title": "Creative & Other Services",
+      "tags": [
+        "creative & other services",
+        "sector playbook",
+        "operations",
+        "sector"
+      ],
+      "priority": 4,
+      "status": "GUIDANCE",
+      "reviewed": "2026-09-28",
+      "text": "Use this playbook when the user's primary sector is Creative & Other Services.\nRevenue drivers: projects, events, commissions, licensing, product sales.\nCost drivers: materials, labour, equipment, venue, transport, printing/platform fees.\nCompliance questions: copyright/permissions, business/TIN/VAT, venue/fire rules where applicable.\nKey performance indicators: average project value, utilization, revision hours, repeat rate, gross margin.\nCommon risks to test: scope creep, irregular demand, late payment, IP disputes, equipment failure.\n\nAsk for location, startup stage, available capital, ownership, customer type, price assumptions, capacity, staffing, supplier information and financing method. Build projections from the user's operating capacity and prices rather than generic industry averages.",
+      "source": "Curated sector playbook",
+      "url": "",
+      "reviewDays": 365
     }
   ]
 }

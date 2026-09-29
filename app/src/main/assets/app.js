@@ -24,9 +24,12 @@ const sectorPresets={
 let selectedCategory='Food & Catering';
 let currentPlan=null;
 let knowledge={version:'fallback',updated:'unknown',chunks:[]};
-let modelStatusCache={stage:'unknown',installed:false,percent:0,verified:false};
+let componentStatusCache={wifi:false,coreReady:false,knowledge:{ready:false},simple:{stage:'unknown',percent:0},detailed:{stage:'unknown',percent:0}};
 let pendingAi={};
-let modelPoll=null;
+let componentPoll=null;
+let componentVerifyInFlight={simple:false,detailed:false};
+let generationTimer=null;
+let requestedPlanMode='simple';
 
 const fallbackKnowledge=[
  {id:'planning-basics',title:'Business planning basics',tags:['all','planning'],status:'GUIDANCE',text:'Separate startup costs, equipment, working capital, monthly operating costs and owner drawings. Validate demand with customers before scaling.'},
@@ -47,10 +50,10 @@ function go(name){
   const screen=slugScreen(name); if(screen)screen.classList.add('active');
   document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.nav===name));
   if(name==='saved')renderSaved();
-  if(name==='settings'){updateSettings();refreshModelStatus();}
+  if(name==='settings'){updateSettings();refreshComponentStatus(false,false);}
   window.scrollTo(0,0);
 }
-function showCreate(cat){if(cat)selectedCategory=cat;renderChips();refreshCreateAiStatus();go('create')}
+function showCreate(cat){if(cat)selectedCategory=cat;renderChips();refreshCreateComponentStatus();go('create');refreshComponentStatus(false)}
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2400);
@@ -149,6 +152,7 @@ Name: ${plan.name}
 Category: ${plan.cat}
 Idea: ${plan.idea}
 Target customers: ${plan.customers}
+Plan depth: ${plan.planMode==='detailed'?'DETAILED — give deeper operational, market and risk analysis':'SIMPLE — keep each section concise and practical'}
 
 DETERMINISTIC PLANNING FIGURES
 Funding requested: ${money(plan.funding)}
@@ -191,50 +195,99 @@ Assumptions to Verify
 `;
 }
 
+function selectedMode(){
+  const el=document.querySelector('input[name="planMode"]:checked');
+  return el?el.value:'simple';
+}
+function updateModeUi(){
+  requestedPlanMode=selectedMode();
+  document.querySelectorAll('.mode-card').forEach(x=>x.classList.toggle('selected',x.dataset.mode===requestedPlanMode));
+  const note=document.getElementById('modeNote');
+  if(!note)return;
+  if(requestedPlanMode==='detailed'){
+    const ready=componentStatusCache.detailed?.stage==='ready';
+    note.textContent=ready?'Detailed planning is ready on this device.':'Detailed planning may require an additional Wi-Fi download the first time you use it.';
+  }else note.textContent='Simple planning is the fastest option and is recommended for most first drafts.';
+}
+
 function generatePlan(){
   const plan=buildBasePlan();if(!plan)return;
-  const chunks=retrieveKnowledge(plan);
+  const mode=selectedMode();plan.planMode=mode;
+  const needed=mode==='detailed'?componentStatusCache.detailed:componentStatusCache.simple;
+  const ready=needed&&needed.stage==='ready'&&componentStatusCache.knowledge?.ready;
+
+  if(!ready){
+    pendingPlanAfterComponents={plan,mode};
+    ensureComponentsForMode(mode,true);
+    return;
+  }
+  startPlanGeneration(plan,mode);
+}
+let pendingPlanAfterComponents=null;
+
+function startPlanGeneration(plan,mode){
+  const chunks=retrieveKnowledge(plan,mode==='detailed'?9:5);
   plan.retrieved=chunks.map(c=>({id:c.id,title:c.title,source:c.source||'',url:c.url||'',status:c.status||'GUIDANCE',reviewed:c.reviewed||''}));
-
-  const useAi=localStorage.getItem('gbpb_use_local_ai')!=='0';
-  const ready=modelStatusCache.installed||modelStatusCache.stage==='ready';
-
-  if(useAi&&ready&&hasAndroid()&&typeof Android.generateBusinessPlan==='function'){
-    const id='plan_'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    pendingAi[id]=plan;
-    const btn=document.getElementById('generateBtn');btn.disabled=true;btn.textContent='🤖 Qwen is writing your plan…';
-    const st=document.getElementById('createAiStatus');st.className='ai-status';st.textContent='Local Qwen is generating on this phone. This can take a little while on first use.';
-    try{
-      Android.generateBusinessPlan(id,buildAiPrompt(plan,chunks));
-    }catch(e){
-      finishFallback(plan,'Unable to start local AI: '+e.message);
-    }
-  }else{
-    finishFallback(plan,ready?'Local AI is disabled in Settings.':'Local AI is not installed yet; using the offline template + curated knowledge pack.');
+  const id='plan_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  pendingAi[id]=plan;
+  requestedPlanMode=mode;
+  showGenerationProgress(mode);
+  setGenerationStage(1,'Preparing your business idea',10);
+  setTimeout(()=>setGenerationStage(2,'Reading local planning resources',25),250);
+  setTimeout(()=>setGenerationStage(3,'Building the financial framework',40),500);
+  setTimeout(()=>setGenerationStage(4,'Starting the planning engine',55),750);
+  try{
+    Android.generateBusinessPlan(id,buildAiPrompt(plan,chunks),mode);
+  }catch(e){
+    closeGenerationProgress();
+    delete pendingAi[id];
+    toast('Could not start the planner: '+e.message);
   }
 }
 
-function finishFallback(plan,message){
-  plan.aiGenerated=false;
-  plan.aiText='';
-  savePlan(plan);currentPlan=plan;renderPlan(plan);go('plan');
-  restoreGenerateButton();toast(message||'Business plan created.');
+function showGenerationProgress(mode){
+  const m=document.getElementById('generationModal');if(!m)return;
+  document.getElementById('generationTitle').textContent=mode==='detailed'?'Creating your detailed business plan':'Creating your business plan';
+  m.classList.add('show');
+  document.querySelectorAll('.gen-step').forEach(x=>x.classList.remove('active','done'));
+  setGenerationStage(1,'Preparing your business idea',8);
+  let p=55;
+  clearInterval(generationTimer);
+  generationTimer=setInterval(()=>{
+    if(p<92){p+=Math.max(1,Math.round((92-p)/12));updateGenerationBar(p)}
+  },1400);
 }
-function restoreGenerateButton(){
-  const btn=document.getElementById('generateBtn');
-  if(btn){btn.disabled=false;btn.textContent='✨ Create My Business Plan'}
-  refreshCreateAiStatus();
+function updateGenerationBar(percent){
+  const bar=document.getElementById('generationBar'),pct=document.getElementById('generationPercent');
+  if(bar)bar.style.width=Math.min(100,percent)+'%';if(pct)pct.textContent=Math.min(100,percent)+'%';
 }
+function setGenerationStage(n,text,percent){
+  const t=document.getElementById('generationStatus');if(t)t.textContent=text;
+  document.querySelectorAll('.gen-step').forEach((x,i)=>{x.classList.toggle('done',i<n-1);x.classList.toggle('active',i===n-1)});
+  updateGenerationBar(percent);
+}
+function closeGenerationProgress(){
+  clearInterval(generationTimer);generationTimer=null;
+  const m=document.getElementById('generationModal');if(m)m.classList.remove('show');
+}
+window.onAiNativeStage=function(requestId,stage){
+  if(stage==='loading')setGenerationStage(4,'Loading planning components',58);
+  if(stage==='writing')setGenerationStage(5,'Writing your business plan',68);
+  if(stage==='finalizing')setGenerationStage(6,'Finalizing your plan',94);
+};
 
 window.onAiResult=function(requestId,text,tps){
   const plan=pendingAi[requestId];delete pendingAi[requestId];if(!plan)return;
+  setGenerationStage(6,'Finalizing your plan',100);
   plan.aiGenerated=true;plan.aiText=stripThinking(text);plan.aiTps=parseFloat(tps)||null;
-  savePlan(plan);currentPlan=plan;renderPlan(plan);go('plan');restoreGenerateButton();
-  toast('Local AI business plan created.');
+  setTimeout(()=>{
+    closeGenerationProgress();savePlan(plan);currentPlan=plan;renderPlan(plan);go('plan');
+    toast('Business plan created. Tap the plan text to make your own edits.');
+  },450);
 };
 window.onAiError=function(requestId,message){
-  const plan=pendingAi[requestId];delete pendingAi[requestId];if(!plan)return;
-  finishFallback(plan,'Qwen could not finish; template mode was used. '+message);
+  delete pendingAi[requestId];closeGenerationProgress();
+  toast('The planner could not finish. Please try again. '+message);
 };
 
 function stripThinking(text){
@@ -267,41 +320,72 @@ function formatAiText(text){
   return html||'<p>No AI narrative was returned.</p>';
 }
 
+function canonicalHeading(line){
+  const canonical=['Executive Summary','Business Description','Market Opportunity','Target Customers','Products and Pricing Strategy','Marketing and Sales Strategy','Operations Plan','Staffing','Guyana Compliance and Registration','Funding Requirement and Use of Funds','Financial Outlook','SWOT Analysis','Risks and Mitigation','Implementation Timeline','Assumptions to Verify'];
+  const clean=String(line||'').replace(/^#{1,4}\s*/,'').replace(/^\*\*(.*?)\*\*:?$/,'$1').replace(/:$/,'').trim().toLowerCase();
+  return canonical.find(x=>x.toLowerCase()===clean)||null;
+}
+function parsePlanSections(text){
+  const sections={};let current=null;
+  for(const raw of stripThinking(text).split(/\r?\n/)){
+    const line=raw.trim();if(!line)continue;
+    const head=canonicalHeading(line);
+    if(head){current=head;if(!sections[current])sections[current]=[];continue}
+    if(current)sections[current].push(line);
+  }
+  return Object.fromEntries(Object.entries(sections).map(([k,v])=>[k,v.join('\n')]));
+}
+function formatBody(text){
+  const lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);let html='',list=false;
+  for(const line of lines){
+    if(/^[-•*]\s+/.test(line)){if(!list){html+='<ul>';list=true}html+=`<li>${esc(line.replace(/^[-•*]\s+/,''))}</li>`}
+    else{if(list){html+='</ul>';list=false}html+=`<p>${esc(line.replace(/^\*\*(.*?)\*\*$/,'$1'))}</p>`}
+  }
+  if(list)html+='</ul>';return html||'<p>Tap here to add your own notes.</p>';
+}
+function editableSection(title,text){return `<div class="editable-section" contenteditable="true" data-section="${esc(title)}">${formatBody(text)}</div>`}
+
 function renderPlan(p){
   const first=p.months[0],last=p.months[p.months.length-1];
   const yearSales=p.months.reduce((a,m)=>a+m.sales,0);
   const yearProfit=p.months.reduce((a,m)=>a+m.profit,0);
-  const aiCard=p.aiGenerated&&p.aiText?`
-    <div class="plan-card ai-output">
-      <h3 style="margin-top:0">🤖 Local AI Business Plan</h3>
-      <p class="tiny">Generated entirely on this device with Qwen3 1.7B${p.aiTps?' • '+p.aiTps.toFixed(1)+' tokens/sec':''}. Curated Guyana facts are dated; estimates still require validation.</p>
-      ${formatAiText(p.aiText)}
-    </div>`:'';
+  const ai=parsePlanSections(p.aiText||'');const edits=p.sectionEdits||{};
+  const sec=(title,fallback)=>edits[title]||ai[title]||fallback;
 
   const sourceHtml=(p.retrieved||[]).length?`
-    <div class="plan-card"><h3>Local Knowledge Used</h3>
-      <p>The app retrieved these offline knowledge items for this plan.</p>
+    <div class="plan-card"><h3>Planning Sources Used</h3>
+      <p>These offline planning resources were selected as relevant to this business idea.</p>
       ${(p.retrieved||[]).map(s=>s.url
         ?`<a class="source-chip" href="${esc(safeUrl(s.url))}">${esc(s.title)} • ${esc(s.status)}</a>`
         :`<span class="source-chip">${esc(s.title)} • ${esc(s.status)}</span>`).join('')}
     </div>`:'';
 
   document.getElementById('planContent').innerHTML=`
-   <div class="plan-title"><div class="crumb">← Home &nbsp; • &nbsp; Guyana Business Plan Builder</div><h1>${esc(p.name)}</h1><small>${esc(p.cat)} • Guyana • ${p.aiGenerated?'Local AI':'Offline template'} mode</small></div>
-   ${aiCard}
-   <div class="plan-card"><h3>Executive Summary</h3><p>${esc(p.name)} is a Guyana-focused ${p.cat.toLowerCase()} venture built around this idea: ${esc(p.idea)} The planning model prioritises a clear customer offer, disciplined startup spending, reliable service and repeat business.</p><div class="metrics"><div class="metric"><span>Estimated startup funding</span><b>${money(p.funding)}</b></div><div class="metric"><span>Illustrative year-1 sales</span><b>${money(yearSales)}</b></div><div class="metric"><span>Illustrative operating profit</span><b>${money(yearProfit)}</b></div><div class="metric"><span>Planning margin</span><b>${Math.round(p.margin*100)}%</b></div></div></div>
-   <div class="plan-card"><h3>Business Opportunity</h3><p>The business can compete by combining local knowledge, responsive customer service and a focused offer. Its core target customers are ${esc(p.customers)}. Early validation should come from direct customer conversations, small pilot sales and tracking which products or services generate repeat demand.</p></div>
-   <div class="plan-card"><h3>Marketing & Sales Strategy</h3><p>Use Facebook, WhatsApp, Instagram, referrals, community visibility and partnerships to generate leads. Keep pricing simple, publish clear contact information, collect customer reviews and track enquiries, conversion rate and repeat customers every month.</p></div>
-   <div class="plan-card"><h3>Operations</h3><p>Start lean: secure required supplies and equipment, document daily tasks, maintain stock and cash records, and schedule purchases around actual demand. Separate business funds from personal spending and retain invoices and receipts.</p></div>
-   <div class="plan-card"><h3>Funding Requirement</h3><p>Total illustrative funding requirement: <strong>${money(p.funding)}</strong>.</p>
-     ${bar('Startup / setup',p.startup,p.funding)}${bar('Equipment / tools',p.equipment,p.funding)}${bar('Working capital',p.working,p.funding)}
-   </div>
-   <div class="plan-card"><h3>12-Month Financial Outlook</h3><p>This projection is a planning model, not a guarantee. It assumes gradual customer growth and the planning margin selected for the business type.</p><div class="monthlist">${p.months.map(m=>`<strong>Month ${m.i}</strong> — Sales ${money(m.sales)} • Estimated operating profit ${money(m.profit)}<br>`).join('')}</div><div class="metrics"><div class="metric"><span>Month 1 sales</span><b>${money(first.sales)}</b></div><div class="metric"><span>Month 12 sales</span><b>${money(last.sales)}</b></div></div></div>
-   <div class="plan-card"><h3>SWOT Analysis</h3><div class="swot"><div><b>Strengths</b><p>Local focus, direct customer relationships, flexible decisions and lean overhead potential.</p></div><div><b>Weaknesses</b><p>New brand, limited initial capacity and dependence on disciplined cash flow.</p></div><div><b>Opportunities</b><p>Digital marketing, partnerships, underserved niches and repeat-customer growth.</p></div><div><b>Threats</b><p>Price competition, supplier changes, demand swings and unexpected operating costs.</p></div></div></div>
-   <div class="plan-card"><h3>Implementation Plan</h3><p><strong>Weeks 1–2:</strong> validate demand, confirm suppliers and finalise pricing. <strong>Weeks 3–4:</strong> acquire essential equipment, set up records and brand assets. <strong>Month 2:</strong> launch a focused sales campaign and measure results. <strong>Months 3–6:</strong> strengthen the best-performing offer and add capacity only when demand supports it.</p></div>
+   <div class="plan-title"><div class="crumb">← Home &nbsp; • &nbsp; Guyana Business Plan Builder</div><h1>${esc(p.name)}</h1><small>${esc(p.cat)} • Guyana • ${p.planMode==='detailed'?'Detailed':'Simple'} plan</small></div>
+   <div class="plan-card print-hide"><h3>✏️ Your plan is editable</h3><p>Tap inside any section to change the wording or assumptions. Use <strong>Save My Edits</strong> when finished.</p><button class="smallbtn" onclick="savePlanEdits()">Save My Edits</button></div>
+   <div class="plan-card"><h3>Executive Summary</h3>${editableSection('Executive Summary',sec('Executive Summary',`${p.name} is a Guyana-focused ${p.cat.toLowerCase()} venture built around this idea: ${p.idea} The plan prioritises a clear customer offer, disciplined startup spending, reliable service and repeat business.`))}<div class="metrics"><div class="metric"><span>Estimated startup funding</span><b>${money(p.funding)}</b></div><div class="metric"><span>Illustrative year-1 sales</span><b>${money(yearSales)}</b></div><div class="metric"><span>Illustrative operating profit</span><b>${money(yearProfit)}</b></div><div class="metric"><span>Planning margin</span><b>${Math.round(p.margin*100)}%</b></div></div></div>
+   <div class="plan-card"><h3>Business Description</h3>${editableSection('Business Description',sec('Business Description',`${p.name} will operate in the ${p.cat} sector. The initial concept is: ${p.idea}`))}</div>
+   <div class="plan-card"><h3>Market Opportunity</h3>${editableSection('Market Opportunity',sec('Market Opportunity',`The business should validate demand through customer conversations, pilot sales and careful tracking of repeat purchases before expanding.`))}</div>
+   <div class="plan-card"><h3>Target Customers</h3>${editableSection('Target Customers',sec('Target Customers',`Primary customers may include ${p.customers}. The owner should refine this group by location, purchasing frequency, budget and buying motivation.`))}</div>
+   <div class="plan-card"><h3>Products and Pricing Strategy</h3>${editableSection('Products and Pricing Strategy',sec('Products and Pricing Strategy',`Start with a focused offer, calculate unit cost carefully, add a sustainable margin and verify prices against actual customer willingness to pay.`))}</div>
+   <div class="plan-card"><h3>Marketing and Sales Strategy</h3>${editableSection('Marketing and Sales Strategy',sec('Marketing and Sales Strategy',`Use WhatsApp, Facebook, referrals, community visibility and partnerships to generate leads. Track enquiries, conversion and repeat customers every month.`))}</div>
+   <div class="plan-card"><h3>Operations Plan</h3>${editableSection('Operations Plan',sec('Operations Plan',`Start lean, document daily tasks, maintain stock and cash records, schedule purchases around actual demand and keep business funds separate from personal spending.`))}</div>
+   <div class="plan-card"><h3>Staffing</h3>${editableSection('Staffing',sec('Staffing',`The planning model allows for approximately ${p.jobs} initial job${p.jobs===1?'':'s'}, subject to real workload, wages and cash flow.`))}</div>
+   <div class="plan-card"><h3>Guyana Compliance and Registration</h3>${editableSection('Guyana Compliance and Registration',sec('Guyana Compliance and Registration',`Verify the business structure, TIN, registration, NIS, tax, licence and sector-specific requirements that apply before formal operation.`))}</div>
+   <div class="plan-card"><h3>Funding Requirement and Use of Funds</h3>${editableSection('Funding Requirement and Use of Funds',sec('Funding Requirement and Use of Funds',`The illustrative funding requirement is ${money(p.funding)}. The app has allocated this across setup, equipment and working capital as a starting planning framework.`))}${bar('Startup / setup',p.startup,p.funding)}${bar('Equipment / tools',p.equipment,p.funding)}${bar('Working capital',p.working,p.funding)}</div>
+   <div class="plan-card"><h3>Financial Outlook</h3>${editableSection('Financial Outlook',sec('Financial Outlook',`The figures below are planning estimates rather than guarantees. Replace them with actual supplier quotations, pricing and confirmed operating costs before using the plan for financing.`))}<div class="monthlist">${p.months.map(m=>`<strong>Month ${m.i}</strong> — Sales ${money(m.sales)} • Estimated operating profit ${money(m.profit)}<br>`).join('')}</div><div class="metrics"><div class="metric"><span>Month 1 sales</span><b>${money(first.sales)}</b></div><div class="metric"><span>Month 12 sales</span><b>${money(last.sales)}</b></div></div></div>
+   <div class="plan-card"><h3>SWOT Analysis</h3>${editableSection('SWOT Analysis',sec('SWOT Analysis',`Strengths: local focus and flexible decisions.\nWeaknesses: new brand and limited initial capacity.\nOpportunities: digital marketing, partnerships and underserved niches.\nThreats: price competition, supplier changes and unexpected operating costs.`))}</div>
+   <div class="plan-card"><h3>Risks and Mitigation</h3>${editableSection('Risks and Mitigation',sec('Risks and Mitigation',`Monitor cash flow, supplier reliability, customer demand and compliance requirements. Keep contingency funds and avoid scaling fixed costs before demand is demonstrated.`))}</div>
+   <div class="plan-card"><h3>Implementation Timeline</h3>${editableSection('Implementation Timeline',sec('Implementation Timeline',`Weeks 1–2: validate demand and confirm suppliers.\nWeeks 3–4: acquire essential equipment and establish records.\nMonth 2: launch and measure results.\nMonths 3–6: strengthen the best-performing offer and expand only when demand supports it.`))}</div>
+   <div class="plan-card"><h3>Assumptions to Verify</h3>${editableSection('Assumptions to Verify',sec('Assumptions to Verify',`VERIFY current supplier prices, rent, wages, licensing requirements, tax treatment, financing terms and customer demand before relying on the final figures.`))}</div>
    ${sourceHtml}
    <div class="unlock"><h3>Professional Printable Plan</h3><p>${isUnlocked()?'Unlocked on this device. You can print or save to PDF.':'Unlock the professional printable layout and PDF-ready output.'}</p><button class="pay" onclick="${isUnlocked()?'printPlan()':'openPayment()'}">${isUnlocked()?'🖨 Print / Save PDF':'Unlock PDF • GYD $500'}</button></div>
    <button class="secondary print-hide" onclick="showCreate('${p.cat.replaceAll("'","\\'")}')">Edit / Create Another Plan</button>`;
+}
+function savePlanEdits(){
+  if(!currentPlan)return;
+  const edits={};document.querySelectorAll('.editable-section').forEach(el=>{edits[el.dataset.section]=el.innerText.trim()});
+  currentPlan.sectionEdits=edits;savePlan(currentPlan);toast('Your edits were saved on this device.');
 }
 function bar(label,val,total){return `<div class="barrow"><label><span>${label}</span><span>${money(val)}</span></label><div class="bar"><i style="width:${Math.max(6,val/total*100)}%"></i></div></div>`}
 
@@ -313,7 +397,7 @@ function savePlan(plan){
 function renderSaved(){
   const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const el=document.getElementById('savedList');
   if(!arr.length){el.innerHTML='<div class="saved-empty">📄<h3>No saved plans yet</h3><p>Create your first business plan and it will appear here.</p><button class="primary" onclick="showCreate()">Create a Plan</button></div>';return}
-  el.innerHTML=arr.map(p=>`<div class="saved-card"><h3>${esc(p.name)}</h3><small>${esc(p.cat)} • ${new Date(p.created).toLocaleDateString()} • ${p.aiGenerated?'Local AI':'Template'}</small><div class="row"><button class="smallbtn" onclick="openSaved(${p.id})">Open</button><button class="smallbtn" onclick="deleteSaved(${p.id})">Delete</button></div></div>`).join('');
+  el.innerHTML=arr.map(p=>`<div class="saved-card"><h3>${esc(p.name)}</h3><small>${esc(p.cat)} • ${new Date(p.created).toLocaleDateString()} • ${p.aiGenerated?'Generated':'Template'}</small><div class="row"><button class="smallbtn" onclick="openSaved(${p.id})">Open</button><button class="smallbtn" onclick="deleteSaved(${p.id})">Delete</button></div></div>`).join('');
 }
 function openSaved(id){const arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]');const p=arr.find(x=>x.id===id);if(p){currentPlan=p;renderPlan(p);go('plan')}}
 function deleteSaved(id){let arr=JSON.parse(localStorage.getItem('gbpb_plans')||'[]').filter(x=>x.id!==id);localStorage.setItem('gbpb_plans',JSON.stringify(arr));renderSaved();toast('Plan deleted.')}
@@ -327,89 +411,122 @@ function updateSettings(){
   const a=document.getElementById('unlockStatus'),b=document.getElementById('unlockBadge');
   if(a)a.textContent=yes?'Professional printing is enabled':'Not unlocked';
   if(b)b.textContent=yes?'Unlocked':'Locked';
-  const use=document.getElementById('useLocalAi');if(use)use.checked=localStorage.getItem('gbpb_use_local_ai')!=='0';
-  const ks=document.getElementById('knowledgeStatus');if(ks)ks.textContent=`${(knowledge.chunks||[]).length} local knowledge items • updated ${knowledge.updated||'unknown'}`;
-}
-function saveAiPreference(){
-  const use=document.getElementById('useLocalAi');
-  localStorage.setItem('gbpb_use_local_ai',use&&use.checked?'1':'0');
-  refreshCreateAiStatus();
+  const ready=componentStatusCache.coreReady;
+  const status=document.getElementById('componentSettingsStatus'),badge=document.getElementById('componentSettingsBadge');
+  if(status)status.textContent=ready?'Everything needed for simple plans is ready.':'Some planning components still need to be downloaded.';
+  if(badge)badge.textContent=ready?'✓ Ready':'Update';
 }
 function printPlan(){try{Android.printPlan()}catch(e){window.print()}}
 
-function refreshCreateAiStatus(){
-  const el=document.getElementById('createAiStatus');if(!el)return;
-  const enabled=localStorage.getItem('gbpb_use_local_ai')!=='0';
-  if(!enabled){el.className='ai-status warn';el.textContent='Local AI is turned off. The app will use its offline template and Guyana knowledge pack.';return}
-  if(modelStatusCache.installed||modelStatusCache.stage==='ready'){
-    el.className='ai-status';el.textContent='🤖 Local Qwen ready — this plan can be generated on-device with no AI API charge.';
-  }else if(['downloading','pending','paused'].includes(modelStatusCache.stage)){
-    el.className='ai-status warn';el.textContent=`Qwen download ${modelStatusCache.percent||0}% complete. Template mode is available while it downloads.`;
-  }else{
-    el.className='ai-status warn';el.textContent='Qwen is not downloaded yet. You can still create a template plan, or install the local model in Settings.';
-  }
-}
-
 function parseJsonSafe(s,def={}){try{return JSON.parse(s)}catch(e){return def}}
-function refreshModelStatus(showToast=false){
-  if(!hasAndroid()||typeof Android.getModelStatus!=='function'){
-    modelStatusCache={stage:'browser_preview',installed:false,percent:0,verified:false};
-    updateModelUi();if(showToast)toast('Model controls work inside the Android app.');return;
-  }
-  try{
-    modelStatusCache=parseJsonSafe(Android.getModelStatus(),{stage:'unknown',installed:false,percent:0});
-  }catch(e){modelStatusCache={stage:'error',installed:false,percent:0,error:e.message}}
-  updateModelUi();refreshCreateAiStatus();
-
-  if(['downloading','pending','paused','finishing'].includes(modelStatusCache.stage)){
-    if(!modelPoll)modelPoll=setInterval(()=>refreshModelStatus(false),1800);
-  }else if(modelPoll){clearInterval(modelPoll);modelPoll=null}
-}
-function updateModelUi(){
-  const badge=document.getElementById('modelBadge'),bar=document.getElementById('modelProgress'),detail=document.getElementById('modelDetail');
-  if(!badge||!bar||!detail)return;
-  const s=modelStatusCache;bar.style.width=(s.percent||0)+'%';
-  const labels={ready:'Ready',downloading:'Downloading',pending:'Pending',paused:'Paused',failed:'Failed',not_downloaded:'Not installed',browser_preview:'Android only',finishing:'Finishing',error:'Error'};
-  badge.textContent=labels[s.stage]||'Checking';
-  if(s.stage==='ready'){
-    detail.textContent=`Ready • ${formatBytes(s.bytes)}${s.verified?' • SHA-256 verified':' • verification recommended'}`;
-  }else if(['downloading','pending','paused','finishing'].includes(s.stage)){
-    detail.textContent=`${s.percent||0}% • ${formatBytes(s.bytes)}${s.totalBytes>0?' of '+formatBytes(s.totalBytes):''}`;
-  }else if(s.stage==='failed'){
-    detail.textContent='Download failed. Check storage/network and try again.';
-  }else if(s.stage==='browser_preview'){
-    detail.textContent='The local model downloader is available in the installed Android APK.';
+function refreshCreateComponentStatus(){
+  const el=document.getElementById('createAiStatus');if(!el)return;
+  const mode=selectedMode();const s=mode==='detailed'?componentStatusCache.detailed:componentStatusCache.simple;
+  if(s?.stage==='ready'&&componentStatusCache.knowledge?.ready){
+    el.className='ai-status';el.textContent='✓ Ready to create your plan privately on this device.';
+  }else if(['downloading','pending','paused','needs_verification'].includes(s?.stage)){
+    el.className='ai-status warn';el.textContent=`Preparing components… ${s?.percent||0}%`;
   }else{
-    detail.textContent='Not downloaded. About 1.28 GB free storage is needed, plus working RAM while Qwen runs.';
+    el.className='ai-status warn';el.textContent='A Wi-Fi download may be needed before this plan can be created.';
   }
-  const d=document.getElementById('downloadModelBtn');
-  if(d)d.textContent=s.stage==='ready'?'AI Installed':'Download AI';
 }
-function downloadLocalModel(){
-  if(!hasAndroid()){toast('Install the Android APK to download the local model.');return}
-  try{
-    const wifi=document.getElementById('wifiOnly')?.checked!==false;
-    const r=parseJsonSafe(Android.startModelDownload(wifi),{ok:false,message:'Unknown error'});
-    toast(r.message||'Download request sent.');refreshModelStatus();
-  }catch(e){toast('Could not start model download: '+e.message)}
-}
-function deleteLocalModel(){
-  if(!hasAndroid()){toast('Model controls are available in Android.');return}
-  if(!confirm('Delete the downloaded Qwen model from this device?'))return;
-  try{Android.deleteModel();toast('Local model deleted.');setTimeout(()=>refreshModelStatus(),300)}catch(e){toast('Delete failed: '+e.message)}
-}
-function verifyLocalModel(){
-  if(!hasAndroid()||!modelStatusCache.installed){toast('Download the model first.');return}
-  const id='verify_'+Date.now();toast('Verifying the 1.28 GB model…');
-  try{Android.verifyModel(id)}catch(e){toast('Verification could not start: '+e.message)}
-}
-window.onModelVerified=function(requestId,ok,hash){
-  if(ok==='true'){toast('Model verified successfully.');modelStatusCache.verified=true}
-  else toast('Model verification failed. Delete it and download again.');
-  refreshModelStatus();
-};
-window.onModelVerificationError=function(requestId,message){toast('Verification error: '+message)};
 
+function refreshComponentStatus(showToast=false,fromStartup=false){
+  if(!hasAndroid()||typeof Android.getComponentStatus!=='function'){
+    componentStatusCache={wifi:false,coreReady:false,knowledge:{ready:true,items:(knowledge.chunks||[]).length},simple:{stage:'browser_preview',percent:0},detailed:{stage:'browser_preview',percent:0}};
+    updateSettings();refreshCreateComponentStatus();if(fromStartup)hideComponentGate();return;
+  }
+  try{componentStatusCache=parseJsonSafe(Android.getComponentStatus(),componentStatusCache)}catch(e){}
+  updateSettings();refreshCreateComponentStatus();updateModeUi();updateComponentGate();
+
+  for(const mode of ['simple','detailed']){
+    const st=componentStatusCache[mode];
+    if(st?.stage==='needs_verification'&&!componentVerifyInFlight[mode]){
+      componentVerifyInFlight[mode]=true;
+      try{Android.verifyComponent(mode,'verify_'+mode+'_'+Date.now())}catch(e){componentVerifyInFlight[mode]=false}
+    }
+  }
+
+  const busy=['downloading','pending','paused','needs_verification'].some(x=>[componentStatusCache.simple?.stage,componentStatusCache.detailed?.stage].includes(x));
+  if(busy&&!componentPoll)componentPoll=setInterval(()=>refreshComponentStatus(false,false),1600);
+  if(!busy&&componentPoll){clearInterval(componentPoll);componentPoll=null}
+  if(showToast)toast(componentStatusCache.coreReady?'Components are ready.':'Component check complete.');
+}
+
+window.onComponentVerified=function(requestId,mode,ok){
+  componentVerifyInFlight[mode]=false;
+  if(ok!=='true')toast('A downloaded component could not be verified. Please download it again.');
+  setTimeout(()=>refreshComponentStatus(false,false),250);
+};
+window.onComponentVerificationError=function(requestId,mode,message){componentVerifyInFlight[mode]=false;toast('Component check could not finish. '+message);refreshComponentStatus(false,false)};
+
+function startupComponentCheck(){
+  showComponentGate('Checking components','Preparing the app for private offline planning…',5,false);
+  setTimeout(()=>{
+    refreshComponentStatus(false,true);
+    setTimeout(()=>{
+      const s=componentStatusCache.simple;
+      if(componentStatusCache.coreReady){showComponentGate('Components ready','Everything is ready.',100,false);setTimeout(hideComponentGate,450);return}
+      if(['downloading','pending','paused','needs_verification'].includes(s?.stage)){updateComponentGate();return}
+      if(componentStatusCache.wifi){startComponentDownload('simple','startup')}else showWifiRequired('Core components need Wi-Fi before the first business plan can be created. You can continue to the app now and finish setup later.');
+    },220);
+  },350);
+}
+
+function showComponentGate(title,text,percent=0,showActions=false){
+  const gate=document.getElementById('componentGate');if(!gate)return;
+  gate.classList.add('show');document.getElementById('componentGateTitle').textContent=title;document.getElementById('componentGateText').textContent=text;
+  document.getElementById('componentGateBar').style.width=percent+'%';document.getElementById('componentGatePct').textContent=percent+'%';
+  document.getElementById('componentGateActions').style.display=showActions?'grid':'none';
+}
+function hideComponentGate(){const g=document.getElementById('componentGate');if(g)g.classList.remove('show')}
+function showWifiRequired(message){
+  showComponentGate('Wi-Fi needed',message,0,true);
+  document.getElementById('componentWifiBtn').style.display='block';
+  document.getElementById('componentContinueBtn').style.display='block';
+}
+function openWifi(){try{Android.openWifiSettings()}catch(e){toast('Open Wi-Fi settings on your phone.')}}
+function continueWithoutComponents(){hideComponentGate();go('home')}
+function checkComponentsAgain(){showComponentGate('Checking components','Checking what is already available…',8,false);setTimeout(()=>refreshComponentStatus(false,true),250);setTimeout(()=>{if(!componentStatusCache.coreReady){if(componentStatusCache.wifi)startComponentDownload('simple','startup');else showWifiRequired('Wi-Fi is still unavailable. You can continue to the home screen and try again later.')}},700)}
+
+function updateComponentGate(){
+  const gate=document.getElementById('componentGate');if(!gate||!gate.classList.contains('show'))return;
+  let mode=requestedPlanMode==='detailed'?'detailed':'simple';
+  const s=componentStatusCache[mode]||{};
+  if(s.stage==='ready'&&componentStatusCache.knowledge?.ready){
+    showComponentGate('Components ready','Everything is ready.',100,false);
+    if(pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;setTimeout(()=>{hideComponentGate();startPlanGeneration(x.plan,x.mode)},400)}
+    else setTimeout(hideComponentGate,500);
+    return;
+  }
+  if(['downloading','pending','paused'].includes(s.stage)){
+    const pct=Math.max(1,s.percent||0);showComponentGate('Downloading components','Keep the app open while the download finishes. Wi-Fi only.',pct,false);return;
+  }
+  if(s.stage==='needs_verification'){showComponentGate('Checking components','Finishing setup…',99,false);return}
+  if(s.stage==='failed'){showWifiRequired('The component download did not finish. Connect to Wi-Fi and try again.');return}
+}
+
+function startComponentDownload(mode,reason='manual'){
+  requestedPlanMode=mode;
+  if(!hasAndroid()){toast('Component downloads are available in the installed Android app.');return}
+  if(!componentStatusCache.wifi){showWifiRequired(mode==='detailed'?'Detailed planning needs an additional Wi-Fi download. You can continue with the simple plan instead.':'Wi-Fi is needed to download the required components.');return}
+  showComponentGate('Downloading components',mode==='detailed'?'Preparing detailed planning. Wi-Fi only.':'Preparing private offline planning. Wi-Fi only.',1,false);
+  try{
+    const r=parseJsonSafe(Android.startComponentDownload(mode),{ok:false});
+    if(!r.ok){if(r.needsWifi)showWifiRequired('Wi-Fi is required for this download.');else{hideComponentGate();toast(r.message||'Could not start component download.')}}
+    else{refreshComponentStatus(false,false);if(!componentPoll)componentPoll=setInterval(()=>refreshComponentStatus(false,false),1600)}
+  }catch(e){hideComponentGate();toast('Could not start component download: '+e.message)}
+}
+
+function ensureComponentsForMode(mode,forPlan=false){
+  requestedPlanMode=mode;refreshComponentStatus(false,false);
+  const s=mode==='detailed'?componentStatusCache.detailed:componentStatusCache.simple;
+  if(s?.stage==='ready'&&componentStatusCache.knowledge?.ready){hideComponentGate();if(forPlan&&pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;startPlanGeneration(x.plan,x.mode)};return}
+  if(componentStatusCache.wifi)startComponentDownload(mode,forPlan?'plan':'manual');
+  else showWifiRequired(mode==='detailed'?'Detailed planning requires an additional Wi-Fi download. You can switch to Simple Plan or continue to the app.':'Wi-Fi is needed to finish the required component download. You can continue to the app and try again later.');
+}
+function settingsDownloadComponents(){requestedPlanMode='simple';ensureComponentsForMode('simple',false)}
+function settingsCheckComponents(){showComponentGate('Checking components','Checking what is already available…',8,false);setTimeout(()=>{refreshComponentStatus(true,false);setTimeout(hideComponentGate,650)},250)}
 function loadKnowledge(){
   let data=null;
   if(hasAndroid()&&typeof Android.getKnowledgeJson==='function'){
@@ -426,7 +543,7 @@ const tipData=[
  ['🧾','Keep records from day one','Track every sale and expense. Good records help pricing, cash flow, tax preparation and financing conversations.'],
  ['📦','Buy inventory from demand','Start lean, measure what sells and restock around real demand rather than tying up too much cash.'],
  ['🤝','Build repeat customers','Follow up, ask for feedback and make it easy for satisfied customers to buy again or refer someone else.'],
- ['🤖','Use AI as a drafting tool','Qwen can organise and write the plan locally, but current legal, tax and market facts should still be checked before formal use.']
+ ['🔒','Private planning','The planning engine can work locally on the phone, but current legal, tax and market facts should still be checked before formal use.']
 ];
 function renderTips(){document.getElementById('tips').innerHTML=tipData.map(([e,h,p])=>`<div class="tip"><b>${e}</b><h3>${h}</h3><p>${p}</p></div>`).join('')}
 
@@ -434,6 +551,8 @@ renderCategories();
 renderChips();
 renderTips();
 loadKnowledge();
+updateModeUi();
 updateSettings();
-refreshModelStatus();
-refreshCreateAiStatus();
+refreshComponentStatus(false,false);
+refreshCreateComponentStatus();
+setTimeout(startupComponentCheck,250);

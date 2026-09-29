@@ -1,32 +1,182 @@
-[
-  {
-    "title": "GRA \u2013 2026 personal allowance and income tax",
+{
+  "GRA_2026_INCOME": {
+    "agency": "Guyana Revenue Authority",
+    "title": "Revised Personal Allowance and Deductions for Income Tax 2026",
     "url": "https://gra.gov.gy/notice-to-employers-employees-self-employed-persons-revised-personal-allowance-and-deductions-for-income-tax-2026/",
-    "reviewed": "2026-09-28"
+    "checked": "2026-09-28"
   },
-  {
-    "title": "GRA \u2013 VAT registration",
-    "url": "https://gra.gov.gy/tax-services/vat-services/register-for-vat/",
-    "reviewed": "2026-09-28"
+  "GRA_CORP": {
+    "agency": "Guyana Revenue Authority",
+    "title": "Corporation Tax Rates & Calculations",
+    "url": "https://gra.gov.gy/quick-links-2/rates-calculations/",
+    "checked": "2026-09-28"
   },
-  {
-    "title": "GRA \u2013 Apply for TIN",
-    "url": "https://gra.gov.gy/quick-links-2/start-your-business/apply-for-tin/",
-    "reviewed": "2026-09-28"
+  "GRA_VAT_RATE": {
+    "agency": "Guyana Revenue Authority",
+    "title": "VAT Rates & Calculations",
+    "url": "https://gra.gov.gy/tax-services/vat-services/how-to-calculate-vat/",
+    "checked": "2026-09-28"
   },
-  {
-    "title": "NIS \u2013 Benefits / contribution rates",
-    "url": "https://www.nis.org.gy/benefits_payable",
-    "reviewed": "2026-09-28"
+  "GRA_VAT_REG": {
+    "agency": "Guyana Revenue Authority",
+    "title": "VAT Registration",
+    "url": "https://gra.gov.gy/vat-registration/",
+    "checked": "2026-09-28"
   },
-  {
-    "title": "Small Business Bureau \u2013 About / small-business definition",
-    "url": "https://sbb.gov.gy/about/",
-    "reviewed": "2026-09-28"
+  "GRA_CORP_RETURN": {
+    "agency": "Guyana Revenue Authority",
+    "title": "File Corporation Tax Return",
+    "url": "https://www.gra.gov.gy/quick-links-2/file-corporation-tax-return/",
+    "checked": "2026-09-28"
   },
-  {
-    "title": "Small Business Bureau \u2013 20% Government Procurement",
+  "GRA_INDIV_RETURN": {
+    "agency": "Guyana Revenue Authority",
+    "title": "Individual Income Tax Return",
+    "url": "https://gra.gov.gy/optimal/individual-income-tax-return/",
+    "checked": "2026-09-28"
+  },
+  "GRA_TIN": {
+    "agency": "Guyana Revenue Authority",
+    "title": "Individual Business TIN guide",
+    "url": "https://www.gra.gov.gy/wp-content/uploads/2024/10/Individual-Business-TIN_Revised-2024.pdf",
+    "checked": "2026-09-28"
+  },
+  "DCRA_BIZ": {
+    "agency": "Deeds and Commercial Registries Authority",
+    "title": "Registering a Business Name",
+    "url": "https://dcraguyana.org/registering-a-business/",
+    "checked": "2026-09-28"
+  },
+  "GOV_BIZ": {
+    "agency": "Government of Guyana Portal",
+    "title": "Business Name Registration",
+    "url": "https://portal.gov.gy/services/SVC-559B5C",
+    "checked": "2026-09-28"
+  },
+  "DCRA_COMPANY": {
+    "agency": "Deeds and Commercial Registries Authority",
+    "title": "Incorporating a Company",
+    "url": "https://dcraguyana.com/companies1/",
+    "checked": "2026-09-28"
+  },
+  "GOV_COMPANY": {
+    "agency": "Government of Guyana Portal",
+    "title": "Company Incorporation",
+    "url": "https://portal.gov.gy/services/SVC-BCC26F",
+    "checked": "2026-09-28"
+  },
+  "NIS": {
+    "agency": "National Insurance Scheme",
+    "title": "Information on N.I.S Contributions",
+    "url": "https://www.nis.org.gy/information_on_contributions",
+    "checked": "2026-09-28"
+  },
+  "NIS_DOWNLOADS": {
+    "agency": "National Insurance Scheme",
+    "title": "Downloads and contribution schedules",
+    "url": "https://www.nis.org.gy/downloads",
+    "checked": "2026-09-28"
+  },
+  "LABOUR_MIN": {
+    "agency": "Ministry of Labour and Manpower Planning",
+    "title": "National Minimum Wage Flyer",
+    "url": "https://labour.gov.gy/wp-content/uploads/2024/07/The-National-Minimum-Wage-Flyer-1-1.pdf",
+    "checked": "2026-09-28"
+  },
+  "LABOUR_OT": {
+    "agency": "Ministry of Labour and Manpower Planning",
+    "title": "Overtime & Leave",
+    "url": "https://labour.gov.gy/wp-content/uploads/2024/07/Overtime-Leave-1.pdf",
+    "checked": "2026-09-28"
+  },
+  "SBB_HOME": {
+    "agency": "Small Business Bureau",
+    "title": "Small Business Bureau",
+    "url": "https://sbb.gov.gy/",
+    "checked": "2026-09-28"
+  },
+  "SBB_FAQ": {
+    "agency": "Small Business Bureau",
+    "title": "FAQ",
+    "url": "https://sbb.gov.gy/faq/",
+    "checked": "2026-09-28"
+  },
+  "SBB_LOANS": {
+    "agency": "Small Business Bureau",
+    "title": "Small Business Development Loans",
+    "url": "https://sbb.gov.gy/loans/",
+    "checked": "2026-09-28"
+  },
+  "SBB_PROC": {
+    "agency": "Small Business Bureau",
+    "title": "20% Government Procurement Programme",
     "url": "https://sbb.gov.gy/20-government-procurement/",
-    "reviewed": "2026-09-28"
+    "checked": "2026-09-28"
+  },
+  "GOINVEST": {
+    "agency": "Guyana Office for Investment",
+    "title": "Invest in Guyana",
+    "url": "https://www.guyanainvest.gov.gy/invest",
+    "checked": "2026-09-28"
+  },
+  "GOINVEST_RES": {
+    "agency": "Guyana Office for Investment",
+    "title": "Resources and Investment Snapshot",
+    "url": "https://www.guyanainvest.gov.gy/resources",
+    "checked": "2026-09-28"
+  },
+  "GRA_INVEST": {
+    "agency": "Guyana Revenue Authority",
+    "title": "Investment Agreements",
+    "url": "https://gra.gov.gy/business/customs-and-trade/exemptions/investment-agreements/",
+    "checked": "2026-09-28"
+  },
+  "EPA": {
+    "agency": "Environmental Protection Agency",
+    "title": "EPA permits",
+    "url": "https://eservices.epa.gov.gy/permits",
+    "checked": "2026-09-28"
+  },
+  "GFSA": {
+    "agency": "Government of Guyana Portal / Guyana Food Safety Authority",
+    "title": "Guyana Food Safety Authority",
+    "url": "https://portal.gov.gy/agencies/guyana-food-safety-authority",
+    "checked": "2026-09-28"
+  },
+  "FOOD_HANDLER": {
+    "agency": "Government of Guyana Portal",
+    "title": "Food Handler Permit, Training and Certification",
+    "url": "https://portal.gov.gy/services/SVC-E93EFD",
+    "checked": "2026-09-28"
+  },
+  "GAFDD": {
+    "agency": "Government Analyst Food and Drug Department",
+    "title": "Inspectorate Division and price list",
+    "url": "https://www.gafdd.gy/inspectorate/",
+    "checked": "2026-09-28"
+  },
+  "FIRE": {
+    "agency": "Government of Guyana Portal / Guyana Fire Service",
+    "title": "Fire Safety Certificate",
+    "url": "https://portal.gov.gy/services/SVC-FAAA3F",
+    "checked": "2026-09-28"
+  },
+  "GNBS": {
+    "agency": "Guyana National Bureau of Standards",
+    "title": "GNBS",
+    "url": "https://gnbsgy.org/",
+    "checked": "2026-09-28"
+  },
+  "CENSUS": {
+    "agency": "Bureau of Statistics",
+    "title": "2022 Census Snapshot",
+    "url": "https://statisticsguyana.gov.gy/census/",
+    "checked": "2026-09-28"
+  },
+  "CPI_AUG26": {
+    "agency": "Bureau of Statistics",
+    "title": "Consumer Price Index, Georgetown, August 2026",
+    "url": "https://statisticsguyana.gov.gy/subjects/price-indices/consumer-price-index-georgetown-guyana-august-2026/",
+    "checked": "2026-09-28"
   }
-]
+}

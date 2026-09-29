@@ -68,6 +68,10 @@
     .ai-output h3{color:#0b7040;margin:17px 0 7px}.ai-output p{margin:0 0 10px}.ai-output ul{margin:5px 0 12px;padding-left:20px}.ai-output li{margin:4px 0;font-size:13px;line-height:1.45;color:#34433a}
     .source-chip{display:inline-block;background:#f0f7f3;color:#306144;border-radius:20px;padding:5px 8px;margin:3px 4px 3px 0;font-size:10px;font-weight:800}
 
+    .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 16px}.mode-card{position:relative;border:1.5px solid #d7e1da;background:#fff;border-radius:16px;padding:13px;min-height:104px}.mode-card.selected{border-color:var(--green);box-shadow:0 0 0 3px rgba(8,127,65,.08)}.mode-card input{position:absolute;right:10px;top:10px;accent-color:var(--green)}.mode-card strong{display:block;font-size:14px;margin-bottom:5px}.mode-card small{display:block;color:#69766e;line-height:1.35}.mode-card .mode-icon{font-size:22px;margin-bottom:5px}.mode-note{font-size:11.5px;color:#68756d;margin:-5px 0 14px;line-height:1.4}
+    .center-modal{align-items:center;padding:18px}.center-card{width:min(460px,100%);margin:auto;background:#fff;border-radius:22px;padding:22px;box-shadow:0 22px 60px rgba(0,0,0,.26);text-align:center}.center-card h2{margin:2px 0 8px}.center-card p{color:#667085;font-size:13px;line-height:1.45}.center-card .progress{height:12px;margin:18px 0 6px}.center-actions{display:none;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.center-actions button{margin:0}.component-icon{width:58px;height:58px;border-radius:18px;background:#eef9f2;display:grid;place-items:center;margin:0 auto 12px;font-size:28px}.pct{font-size:11px;color:#758178;font-weight:800}
+    .gen-list{text-align:left;margin:16px 0 8px}.gen-step{display:flex;align-items:center;gap:10px;padding:8px 0;color:#8a948e;font-size:12px;font-weight:750}.gen-step:before{content:'○';font-size:17px}.gen-step.active{color:#0a7840}.gen-step.active:before{content:'●';color:#0a8b48}.gen-step.done{color:#3e6750}.gen-step.done:before{content:'✓';color:#0a8b48;font-weight:1000}.editable-ai{outline:none;border:1px solid transparent;border-radius:12px;padding:4px 2px}.editable-ai:focus{border-color:#bee0ca;background:#fbfffc;padding:10px}.editable-ai[contenteditable=true]:after{content:''}.component-setting-card{background:#fff;border:1px solid #dfe8e2;border-radius:18px;padding:15px;margin:12px 0;box-shadow:var(--shadow)}.component-setting-card h3{margin:0 0 4px}.component-setting-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.component-setting-actions button{margin:0}
+
     @media(min-width:440px){.categories{grid-template-columns:repeat(3,1fr)}.category{min-height:112px}}
     @media print{.topbar,.bottom,.unlock,.print-hide{display:none!important}.app{max-width:none;box-shadow:none;padding:0}.plan-card,.plan-title{box-shadow:none;break-inside:avoid}.screen{display:none!important}#planScreen{display:block!important}.plan-wrap{padding:0}.page{padding:0}}
   </style>
@@ -97,7 +101,7 @@
         <div class="section-head"><h2>Choose Your Business Type</h2><button class="link" onclick="showCreate()">See all ›</button></div>
         <div class="categories" id="categories"></div>
       </div>
-      <div class="ai-strip"><strong>🤖 Offline AI • No API fees</strong><p>Qwen runs on the phone and uses a curated Guyana business knowledge pack. Internet is only needed once to download the model.</p></div>
+      <div class="ai-strip"><strong>🔒 Private offline planning • No API fees</strong><p>The app can create plans on-device after a one-time Wi-Fi component setup. Your business idea does not need to be sent to a cloud AI service.</p></div>
       <div class="local-banner"><div><b>📈</b>Support Local Business</div><div><b>👥</b>Create Jobs in Guyana</div><div><b>🌱</b>Grow Our Economy</div></div>
     </section>
 
@@ -109,8 +113,15 @@
         <div class="field"><label>Your business idea</label><textarea id="idea" class="input" placeholder="Example: I want to start a small catering business in Georgetown selling Guyanese lunches to offices and events."></textarea></div>
         <div class="field"><label>Business name <small>(optional)</small></label><input id="businessName" class="input" placeholder="Leave blank if you do not have one yet" /></div>
         <div class="field"><label>Approximate amount needed <small>(GYD, optional)</small></label><input id="amount" class="input" inputmode="numeric" placeholder="e.g. 1500000" /></div>
+        <div class="field"><label>Choose plan depth</label>
+          <div class="mode-grid">
+            <label class="mode-card selected" data-mode="simple"><input type="radio" name="planMode" value="simple" checked onchange="updateModeUi();refreshCreateComponentStatus()"/><div class="mode-icon">⚡</div><strong>Simple Plan</strong><small>Faster. Best for a practical first draft and everyday planning.</small></label>
+            <label class="mode-card" data-mode="detailed"><input type="radio" name="planMode" value="detailed" onchange="updateModeUi();refreshCreateComponentStatus()"/><div class="mode-icon">📚</div><strong>Detailed Plan</strong><small>More depth and longer analysis. May need an extra Wi-Fi download.</small></label>
+          </div>
+          <div class="mode-note" id="modeNote">Simple planning is the fastest option and is recommended for most first drafts.</div>
+        </div>
         <button class="primary" id="generateBtn" onclick="generatePlan()">✨ Create My Business Plan</button>
-        <div class="ai-status" id="createAiStatus">Checking local AI…</div>
+        <div class="ai-status" id="createAiStatus">Checking components…</div>
         <button class="secondary" onclick="go('home')">Not now</button>
       </div>
     </section>
@@ -133,27 +144,20 @@
     </section>
 
     <section id="settingsScreen" class="screen">
-      <div class="page"><h1>Settings</h1><p class="sub">Offline AI, storage and app preferences.</p>
-        <div class="model-card">
-          <div class="model-row"><div><h3>Local AI Model</h3><div class="model-meta">Qwen3 1.7B • Q4_K_M GGUF • about 1.28 GB</div></div><span class="badge" id="modelBadge">Checking</span></div>
-          <p class="model-meta">Runs locally with llama.cpp. After the one-time download there is no OpenAI bill, no search-API bill and no API key.</p>
-          <div class="progress"><i id="modelProgress"></i></div>
-          <div class="tiny" id="modelDetail">Checking model storage…</div>
-          <label class="toggleline"><input id="wifiOnly" type="checkbox" checked /> Download model on Wi-Fi only</label>
-          <label class="toggleline" style="margin-top:7px"><input id="useLocalAi" type="checkbox" checked onchange="saveAiPreference()" /> Use local Qwen when available</label>
-          <div class="model-actions" style="margin-top:12px">
-            <button class="primary" id="downloadModelBtn" onclick="downloadLocalModel()">Download AI</button>
-            <button class="secondary" id="verifyModelBtn" onclick="verifyLocalModel()">Verify</button>
-            <button class="secondary" onclick="deleteLocalModel()">Delete model</button>
-            <button class="secondary" onclick="refreshModelStatus(true)">Refresh</button>
+      <div class="page"><h1>Settings</h1><p class="sub">Keep the app ready for private offline planning.</p>
+        <div class="component-setting-card">
+          <div class="model-row"><div><h3>Components</h3><div class="model-meta" id="componentSettingsStatus">Checking what is available…</div></div><span class="badge" id="componentSettingsBadge">Checking</span></div>
+          <p class="model-meta">Downloads are restricted to Wi-Fi so large setup files do not use your mobile data.</p>
+          <div class="component-setting-actions">
+            <button class="primary" onclick="settingsDownloadComponents()">Download Components</button>
+            <button class="secondary" onclick="settingsCheckComponents()">Check Components</button>
           </div>
         </div>
-        <div class="setting"><div><strong>Guyana knowledge pack</strong><small id="knowledgeStatus">Loading curated content</small></div><span class="badge" id="knowledgeBadge">Local</span></div>
         <div class="setting"><div><strong>Currency</strong><small>Financial figures use Guyanese dollars</small></div><span class="badge">GYD</span></div>
-        <div class="setting"><div><strong>Local storage</strong><small>Plans and knowledge stay on this device</small></div><span class="badge">On</span></div>
+        <div class="setting"><div><strong>Local storage</strong><small>Plans and planning resources stay on this device</small></div><span class="badge">On</span></div>
         <div class="setting"><div><strong>Professional unlock</strong><small id="unlockStatus">Not unlocked</small></div><span class="badge" id="unlockBadge">Locked</span></div>
-        <div class="setting"><div><strong>App version</strong><small>Offline AI build</small></div><span class="badge">4.0</span></div>
-        <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning tool and is not an official Government of Guyana service. Regulatory facts in the local knowledge pack are dated and should be verified before lending, investment, tax or legal decisions.</p></div>
+        <div class="setting"><div><strong>App version</strong><small>Offline planning build</small></div><span class="badge">5.0</span></div>
+        <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning tool and is not an official Government of Guyana service. Regulatory information is dated and should be verified before lending, investment, tax or legal decisions.</p></div>
       </div>
     </section>
   </main>
@@ -169,6 +173,36 @@
 <div class="toast" id="toast"></div>
 <div class="modal" id="paymentModal" onclick="if(event.target===this)closePayment()"><div class="sheet"><div class="handle"></div><h2>Unlock Professional Plan</h2><div class="price">GYD $500</div><p>For this prototype, the button below simulates a successful one-time purchase on this device.</p><button class="primary" onclick="demoUnlock()">Demo Unlock</button><button class="secondary" onclick="closePayment()">Cancel</button><p class="disclaimer">For production, replace the demo action with a verified payment provider and server-side receipt validation.</p></div></div>
 
+<div class="modal center-modal show" id="componentGate">
+  <div class="center-card">
+    <div class="component-icon">⚙️</div>
+    <h2 id="componentGateTitle">Checking components</h2>
+    <p id="componentGateText">Preparing the app for private offline planning…</p>
+    <div class="progress"><i id="componentGateBar"></i></div><div class="pct" id="componentGatePct">0%</div>
+    <div class="center-actions" id="componentGateActions">
+      <button class="primary" id="componentWifiBtn" onclick="openWifi()">Open Wi-Fi</button>
+      <button class="secondary" id="componentContinueBtn" onclick="continueWithoutComponents()">Continue to Home</button>
+      <button class="secondary" style="grid-column:1 / -1" onclick="checkComponentsAgain()">Check Again</button>
+    </div>
+  </div>
+</div>
+<div class="modal center-modal" id="generationModal">
+  <div class="center-card">
+    <div class="component-icon">📄</div>
+    <h2 id="generationTitle">Creating your business plan</h2>
+    <p id="generationStatus">Preparing your business idea</p>
+    <div class="progress"><i id="generationBar"></i></div><div class="pct" id="generationPercent">0%</div>
+    <div class="gen-list">
+      <div class="gen-step">Preparing your idea</div>
+      <div class="gen-step">Reading planning resources</div>
+      <div class="gen-step">Building financial framework</div>
+      <div class="gen-step">Loading planner</div>
+      <div class="gen-step">Writing plan</div>
+      <div class="gen-step">Finalizing</div>
+    </div>
+    <p class="tiny">The app is working locally on this device. Detailed plans can take longer on some phones.</p>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>

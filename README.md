@@ -1,65 +1,74 @@
-# Guyana Business Plan Builder v4 — Offline AI
+# Guyana Business Plan Builder v5
 
-This version upgrades the original WebView-based Android project into an offline-first AI business-plan app.
+Android business-plan builder with private on-device generation and an updateable offline Guyana planning knowledge pack.
 
-## What changed
+## v5 experience
 
-- **On-device Qwen**: the app can download `Qwen3-1.7B-Q4_K_M.gguf` once and run it locally.
-- **No AI API key**: generation uses an Android llama.cpp runtime, not OpenAI or a paid search API.
-- **Curated Guyana RAG pack**: 30 local knowledge chunks cover planning, financing, GRA/VAT/TIN references, NIS, SBB and sector playbooks.
-- **Deterministic financial planning**: startup allocation and 12-month projections remain app calculations rather than AI arithmetic.
-- **Anti-hallucination rules**: missing current facts are labelled `VERIFY` or `ESTIMATE`.
-- **Fallback mode**: the app still creates a useful offline template plan when Qwen is not downloaded.
-- **Model Manager**: Settings shows download progress, Wi-Fi-only option, deletion and SHA-256 verification.
-- **GitHub Actions**: `.github/workflows/android.yml` builds a debug APK.
+- Every launch performs a quiet component check.
+- The lightweight planning component is downloaded automatically **only when Wi-Fi is available**.
+- If Wi-Fi is unavailable, the user can continue to the home screen and finish setup later.
+- Starting a plan re-checks required components and resumes setup when Wi-Fi is available.
+- No mobile-data download path is exposed for the large model files.
+- The Settings screen hides model/provider details and only exposes generic **Download Components** and **Check Components** controls.
+- The packaged knowledge pack is checked every launch and refreshed automatically when a newer app build contains a changed pack.
+- **Simple Plan** is the default and uses the lightweight local component.
+- **Detailed Plan** is optional and downloads a larger local component on first use, over Wi-Fi only.
+- Plan creation displays staged progress: preparing idea, reading resources, building finances, loading planner, writing and finalizing.
+- Generated narrative is editable and can be saved locally before printing/export.
 
-## Local AI model
+## Local planning components
 
-Default model:
-- `ggml-org/Qwen3-1.7B-GGUF`
-- file: `Qwen3-1.7B-Q4_K_M.gguf`
-- approx. 1.28 GB
-- Apache-2.0 model license
-- expected SHA-256: `d2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5`
+Developer details are intentionally not shown in the customer UI:
 
-The model is **not included in the APK**. The user downloads it from inside the app and it is stored in the app's private external-files directory.
+- Simple mode: Qwen3-0.6B Q4_0 GGUF, ~429 MB.
+- Detailed mode: Qwen3-1.7B Q4_K_M GGUF, ~1.28 GB.
+- Runtime: `dev.ffmpegkit-maintained:llama-android:0.1.1` / llama.cpp.
+- Both components are downloaded from Hugging Face and SHA-256 verified on-device.
 
-## Runtime
+## Knowledge pack
 
-The project uses the Maven Central AAR:
+`app/src/main/assets/knowledge/knowledge.json` currently contains 52 retrieval-ready items compiled from the Guyana Business Plan Knowledge Pack and its 12 sector playbooks. The app copies this asset to app-private working storage and compares it on every launch. When the asset changes in a future version, the installed working copy is replaced automatically.
 
-`dev.ffmpegkit-maintained:llama-android:0.1.1`
+To expand it in later versions, update `knowledge.json` while preserving this shape:
 
-This wraps llama.cpp for on-device GGUF inference. The free AAR supports arm64-v8a and Android API 24+.
-
-## Build
-
-The repository includes a GitHub Actions workflow. You can also build locally with Java 17 and Gradle:
-
-```bash
-gradle assembleDebug
+```json
+{
+  "version": "5.x-date",
+  "updated": "YYYY-MM-DD",
+  "chunks": [
+    {
+      "id": "unique.id",
+      "title": "Title",
+      "tags": ["sector", "topic"],
+      "priority": 3,
+      "status": "GUIDANCE or CONFIRMED",
+      "reviewed": "YYYY-MM-DD",
+      "text": "Retrieval-ready content",
+      "source": "Source label",
+      "url": "https://..."
+    }
+  ]
+}
 ```
 
-APK output:
+## GitHub Actions
 
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
+Pushes to `main` build a debug APK automatically.
 
-## Important limitations
+For signed release APK/AAB artifacts, configure these GitHub Actions secrets:
 
-- The first Qwen generation can be slow because the model must be loaded from storage.
-- The app targets arm64-v8a phones.
-- Regulatory information is a dated planning reference, not legal/tax advice. Refresh the local knowledge pack periodically.
-- The payment screen still uses the prototype unlock. MMG should be connected later using a verified merchant/backend flow rather than storing merchant secrets in the APK.
+- `ANDROID_KEYSTORE_BASE64`
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
 
-## Local knowledge files
+The workflow will then create both:
 
-```text
-app/src/main/assets/knowledge/
-├── knowledge.json
-├── formulas.json
-└── sources.json
-```
+- `app-release.apk`
+- `app-release.aab`
 
-Reviewed: 2026-09-28
+Keep the same production signing key for all future Play Store updates.
+
+## Important
+
+This is an independent planning tool and is not an official Government of Guyana service. Time-sensitive regulatory, tax, licensing and market information in the offline pack must be periodically reviewed and updated.
