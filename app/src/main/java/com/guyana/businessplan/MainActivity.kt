@@ -190,20 +190,10 @@ Keep the writing concrete and commercially useful. Do not expose hidden chain-of
         out.put("bytes", if (file.exists()) file.length() else 0L)
         out.put("verified", verified)
 
-        if (file.exists() && file.length() >= spec.minimumBytes && verified) {
-            out.put("stage", "ready")
-            out.put("installed", true)
-            out.put("percent", 100)
-            return out
-        }
-
-        if (file.exists() && file.length() >= spec.minimumBytes && !verified) {
-            out.put("stage", "needs_verification")
-            out.put("installed", true)
-            out.put("percent", 99)
-            return out
-        }
-
+        // IMPORTANT: DownloadManager is authoritative while a tracked download exists.
+        // A partially downloaded file can already be larger than minimumBytes. V5 used
+        // to treat that partial file as ready for verification, which caused the repeated
+        // 99% / verification-failed loop seen during active downloads.
         if (id > 0L) {
             val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val cursor = dm.query(DownloadManager.Query().setFilterById(id))
@@ -216,23 +206,59 @@ Keep the writing concrete and commercially useful. Do not expose hidden chain-of
                     out.put("bytes", downloaded)
                     out.put("totalBytes", total)
                     out.put("percent", percent.coerceIn(0, 99))
-                    out.put("installed", false)
                     when (status) {
-                        DownloadManager.STATUS_RUNNING -> out.put("stage", "downloading")
-                        DownloadManager.STATUS_PAUSED -> out.put("stage", "paused")
-                        DownloadManager.STATUS_PENDING -> out.put("stage", "pending")
-                        DownloadManager.STATUS_SUCCESSFUL -> out.put("stage", "needs_verification")
+                        DownloadManager.STATUS_RUNNING -> {
+                            out.put("stage", "downloading")
+                            out.put("installed", false)
+                            return out
+                        }
+                        DownloadManager.STATUS_PAUSED -> {
+                            out.put("stage", "paused")
+                            out.put("installed", false)
+                            return out
+                        }
+                        DownloadManager.STATUS_PENDING -> {
+                            out.put("stage", "pending")
+                            out.put("installed", false)
+                            return out
+                        }
                         DownloadManager.STATUS_FAILED -> {
                             out.put("stage", "failed")
+                            out.put("installed", false)
                             out.put("reason", it.getInt(it.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON)))
+                            return out
                         }
-                        else -> out.put("stage", "missing")
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            // Only after DownloadManager reports SUCCESSFUL may the file be verified.
+                            if (file.exists() && file.length() >= spec.minimumBytes && verified) {
+                                out.put("stage", "ready")
+                                out.put("installed", true)
+                                out.put("percent", 100)
+                            } else {
+                                out.put("stage", "needs_verification")
+                                out.put("installed", file.exists())
+                                out.put("percent", 99)
+                            }
+                            return out
+                        }
                     }
-                    return out
+                } else {
+                    // Stale id: clear it and fall through to local-file checks.
+                    prefs().edit().remove(downloadIdKey(spec)).apply()
                 }
             }
         }
 
+        if (file.exists() && file.length() >= spec.minimumBytes && verified) {
+            out.put("stage", "ready")
+            out.put("installed", true)
+            out.put("percent", 100)
+            return out
+        }
+
+        // An unverified file with no active/successful DownloadManager record is not
+        // automatically re-verified forever. Treat it as missing so a clean download
+        // can be started once by the user or startup flow.
         out.put("stage", "missing")
         out.put("installed", false)
         out.put("percent", 0)
@@ -313,8 +339,16 @@ Keep the writing concrete and commercially useful. Do not expose hidden chain-of
             val spec = modelSpec(mode)
             val file = modelFile(spec)
             val existing = readModelStatus(spec)
-            if (existing.optString("stage") == "ready") {
+            val currentStage = existing.optString("stage")
+
+            if (currentStage == "ready") {
                 return JSONObject().put("ok", true).put("alreadyReady", true).toString()
+            }
+
+            // Never cancel/restart a download that is already active or waiting for its
+            // single final verification pass.
+            if (currentStage in setOf("downloading", "pending", "paused", "needs_verification")) {
+                return JSONObject().put("ok", true).put("alreadyActive", true).put("stage", currentStage).toString()
             }
 
             if (!isWifiConnected()) {
@@ -330,8 +364,8 @@ Keep the writing concrete and commercially useful. Do not expose hidden chain-of
                 if (previousId > 0L) {
                     (getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).remove(previousId)
                 }
+                prefs().edit().remove(downloadIdKey(spec)).putBoolean(verifiedKey(spec), false).apply()
                 if (file.exists()) file.delete()
-                prefs().edit().putBoolean(verifiedKey(spec), false).apply()
 
                 val request = DownloadManager.Request(Uri.parse(spec.url))
                     .setTitle("Guyana Business Plan components")
@@ -363,9 +397,23 @@ Keep the writing concrete and commercially useful. Do not expose hidden chain-of
                     }
                     val hash = sha256(file)
                     val ok = hash.equals(spec.sha256, ignoreCase = true)
-                    prefs().edit().putBoolean(verifiedKey(spec), ok).apply()
+                    if (ok) {
+                        // The completed file has passed its single integrity check.
+                        prefs().edit()
+                            .putBoolean(verifiedKey(spec), true)
+                            .remove(downloadIdKey(spec))
+                            .apply()
+                    } else {
+                        // Bad/corrupt file: clear it once so the UI can offer one clean retry.
+                        prefs().edit()
+                            .putBoolean(verifiedKey(spec), false)
+                            .remove(downloadIdKey(spec))
+                            .apply()
+                        if (file.exists()) file.delete()
+                    }
                     callJs("onComponentVerified", requestId, spec.key, if (ok) "true" else "false")
                 } catch (e: Exception) {
+                    prefs().edit().remove(downloadIdKey(spec)).putBoolean(verifiedKey(spec), false).apply()
                     callJs("onComponentVerificationError", requestId, spec.key, e.message ?: "Verification failed.")
                 }
             }

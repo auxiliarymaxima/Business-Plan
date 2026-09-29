@@ -72,3 +72,12 @@ Keep the same production signing key for all future Play Store updates.
 ## Important
 
 This is an independent planning tool and is not an official Government of Guyana service. Time-sensitive regulatory, tax, licensing and market information in the offline pack must be periodically reviewed and updated.
+
+
+## v5.1 component-flow behavior
+- Launch performs one component check.
+- Only the lightweight core planning component is downloaded automatically, and only over Wi-Fi.
+- The UI monitors an in-progress download without restarting or verifying partial files.
+- Integrity verification runs once after Android DownloadManager reports the transfer complete.
+- The optional detailed-planning component downloads only when Detailed Plan is chosen or when requested in Settings.
+- The packaged knowledge pack is checked on every launch and refreshed automatically when a newer app version contains an updated pack.

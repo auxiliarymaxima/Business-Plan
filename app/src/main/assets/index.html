@@ -146,17 +146,22 @@
     <section id="settingsScreen" class="screen">
       <div class="page"><h1>Settings</h1><p class="sub">Keep the app ready for private offline planning.</p>
         <div class="component-setting-card">
-          <div class="model-row"><div><h3>Components</h3><div class="model-meta" id="componentSettingsStatus">Checking what is available…</div></div><span class="badge" id="componentSettingsBadge">Checking</span></div>
-          <p class="model-meta">Downloads are restricted to Wi-Fi so large setup files do not use your mobile data.</p>
+          <div class="model-row"><div><h3>Core Components</h3><div class="model-meta" id="componentSettingsStatus">Checking what is available…</div></div><span class="badge" id="componentSettingsBadge">Checking</span></div>
+          <p class="model-meta">Required for Simple Plan. Large downloads are restricted to Wi-Fi so they never consume mobile data.</p>
           <div class="component-setting-actions">
-            <button class="primary" onclick="settingsDownloadComponents()">Download Components</button>
+            <button class="primary" onclick="settingsDownloadComponents()">Download Core Components</button>
             <button class="secondary" onclick="settingsCheckComponents()">Check Components</button>
           </div>
+        </div>
+        <div class="component-setting-card">
+          <div class="model-row"><div><h3>Detailed Planning</h3><div class="model-meta" id="detailedSettingsStatus">Optional detailed planning components are not installed.</div></div><span class="badge" id="detailedSettingsBadge">Optional</span></div>
+          <p class="model-meta">Only needed for Detailed Plan. This additional component is about 1.3 GB and downloads over Wi-Fi only.</p>
+          <button class="secondary" onclick="settingsDownloadDetailed()">Download Detailed Components</button>
         </div>
         <div class="setting"><div><strong>Currency</strong><small>Financial figures use Guyanese dollars</small></div><span class="badge">GYD</span></div>
         <div class="setting"><div><strong>Local storage</strong><small>Plans and planning resources stay on this device</small></div><span class="badge">On</span></div>
         <div class="setting"><div><strong>Professional unlock</strong><small id="unlockStatus">Not unlocked</small></div><span class="badge" id="unlockBadge">Locked</span></div>
-        <div class="setting"><div><strong>App version</strong><small>Offline planning build</small></div><span class="badge">5.0</span></div>
+        <div class="setting"><div><strong>App version</strong><small>Offline planning build</small></div><span class="badge">5.1</span></div>
         <div class="plan-card"><h3>Important</h3><p class="disclaimer">This is an independent business-planning tool and is not an official Government of Guyana service. Regulatory information is dated and should be verified before lending, investment, tax or legal decisions.</p></div>
       </div>
     </section>

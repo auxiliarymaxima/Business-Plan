@@ -31,7 +31,7 @@ jobs:
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Guyana-Business-Plan-Builder-v5-debug
+          name: Guyana-Business-Plan-Builder-v5.1-debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Prepare release signing key
@@ -53,12 +53,12 @@ jobs:
         if: env.HAS_RELEASE_KEY == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Guyana-Business-Plan-Builder-v5-release-apk
+          name: Guyana-Business-Plan-Builder-v5.1-release-apk
           path: app/build/outputs/apk/release/app-release.apk
 
       - name: Upload signed release AAB
         if: env.HAS_RELEASE_KEY == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: Guyana-Business-Plan-Builder-v5-release-aab
+          name: Guyana-Business-Plan-Builder-v5.1-release-aab
           path: app/build/outputs/bundle/release/app-release.aab

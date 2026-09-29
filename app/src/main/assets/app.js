@@ -28,6 +28,7 @@ let componentStatusCache={wifi:false,coreReady:false,knowledge:{ready:false},sim
 let pendingAi={};
 let componentPoll=null;
 let componentVerifyInFlight={simple:false,detailed:false};
+let componentFlow={mode:null,reason:null,forPlan:false,active:false};
 let generationTimer=null;
 let requestedPlanMode='simple';
 
@@ -206,7 +207,7 @@ function updateModeUi(){
   if(!note)return;
   if(requestedPlanMode==='detailed'){
     const ready=componentStatusCache.detailed?.stage==='ready';
-    note.textContent=ready?'Detailed planning is ready on this device.':'Detailed planning may require an additional Wi-Fi download the first time you use it.';
+    note.textContent=ready?'Detailed planning is ready on this device.':'Detailed Plan requires an additional ~1.3 GB Wi-Fi component download the first time you use it.';
   }else note.textContent='Simple planning is the fastest option and is recommended for most first drafts.';
 }
 
@@ -413,8 +414,12 @@ function updateSettings(){
   if(b)b.textContent=yes?'Unlocked':'Locked';
   const ready=componentStatusCache.coreReady;
   const status=document.getElementById('componentSettingsStatus'),badge=document.getElementById('componentSettingsBadge');
-  if(status)status.textContent=ready?'Everything needed for simple plans is ready.':'Some planning components still need to be downloaded.';
-  if(badge)badge.textContent=ready?'✓ Ready':'Update';
+  if(status)status.textContent=ready?'Core components are ready for Simple Plan.':'Core components are not installed yet.';
+  if(badge)badge.textContent=ready?'✓ Ready':'Download';
+  const dReady=componentStatusCache.detailed?.stage==='ready';
+  const ds=document.getElementById('detailedSettingsStatus'),db=document.getElementById('detailedSettingsBadge');
+  if(ds)ds.textContent=dReady?'Detailed planning components are ready.':'Optional detailed planning components are not installed.';
+  if(db)db.textContent=dReady?'✓ Ready':'Optional';
 }
 function printPlan(){try{Android.printPlan()}catch(e){window.print()}}
 
@@ -431,102 +436,201 @@ function refreshCreateComponentStatus(){
   }
 }
 
-function refreshComponentStatus(showToast=false,fromStartup=false){
+function refreshComponentStatus(showToast=false){
   if(!hasAndroid()||typeof Android.getComponentStatus!=='function'){
     componentStatusCache={wifi:false,coreReady:false,knowledge:{ready:true,items:(knowledge.chunks||[]).length},simple:{stage:'browser_preview',percent:0},detailed:{stage:'browser_preview',percent:0}};
-    updateSettings();refreshCreateComponentStatus();if(fromStartup)hideComponentGate();return;
+    updateSettings();refreshCreateComponentStatus();return componentStatusCache;
   }
   try{componentStatusCache=parseJsonSafe(Android.getComponentStatus(),componentStatusCache)}catch(e){}
-  updateSettings();refreshCreateComponentStatus();updateModeUi();updateComponentGate();
+  updateSettings();refreshCreateComponentStatus();updateModeUi();
+  if(showToast)toast(componentStatusCache.coreReady?'Components are ready.':'Component check complete.');
+  return componentStatusCache;
+}
 
-  for(const mode of ['simple','detailed']){
-    const st=componentStatusCache[mode];
-    if(st?.stage==='needs_verification'&&!componentVerifyInFlight[mode]){
-      componentVerifyInFlight[mode]=true;
-      try{Android.verifyComponent(mode,'verify_'+mode+'_'+Date.now())}catch(e){componentVerifyInFlight[mode]=false}
-    }
+function stopComponentMonitor(){
+  if(componentPoll){clearInterval(componentPoll);componentPoll=null}
+  componentFlow={mode:null,reason:null,forPlan:false,active:false};
+}
+
+function monitorComponent(mode,reason='manual',forPlan=false){
+  stopComponentMonitor();
+  componentFlow={mode,reason,forPlan,active:true};
+  const tick=()=>{
+    refreshComponentStatus(false);
+    handleComponentFlow();
+  };
+  tick();
+  if(componentFlow.active)componentPoll=setInterval(tick,1600);
+}
+
+function handleComponentFlow(){
+  if(!componentFlow.active)return;
+  const mode=componentFlow.mode;
+  const s=componentStatusCache[mode]||{};
+  const knowledgeReady=!!componentStatusCache.knowledge?.ready;
+
+  if(s.stage==='ready'&&knowledgeReady){
+    const planPending=componentFlow.forPlan&&pendingPlanAfterComponents;
+    stopComponentMonitor();
+    showComponentGate('Components ready','Everything is ready.',100,false);
+    setTimeout(()=>{
+      hideComponentGate();
+      if(planPending){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;startPlanGeneration(x.plan,x.mode)}
+    },420);
+    return;
   }
 
-  const busy=['downloading','pending','paused','needs_verification'].some(x=>[componentStatusCache.simple?.stage,componentStatusCache.detailed?.stage].includes(x));
-  if(busy&&!componentPoll)componentPoll=setInterval(()=>refreshComponentStatus(false,false),1600);
-  if(!busy&&componentPoll){clearInterval(componentPoll);componentPoll=null}
-  if(showToast)toast(componentStatusCache.coreReady?'Components are ready.':'Component check complete.');
+  if(['downloading','pending','paused'].includes(s.stage)){
+    const pct=Math.max(1,Math.min(98,s.percent||1));
+    showComponentGate('Downloading components','Preparing the app. Wi-Fi only.',pct,false);
+    return;
+  }
+
+  if(s.stage==='needs_verification'){
+    showComponentGate('Checking components','Finishing setup…',99,false);
+    if(!componentVerifyInFlight[mode]){
+      componentVerifyInFlight[mode]=true;
+      try{Android.verifyComponent(mode,'verify_'+mode+'_'+Date.now())}
+      catch(e){componentVerifyInFlight[mode]=false;showComponentProblem('Setup could not finish. Please try the download again when Wi-Fi is available.')}
+    }
+    return;
+  }
+
+  if(s.stage==='failed'){
+    stopComponentMonitor();
+    showComponentProblem('The download was interrupted. Connect to Wi-Fi and try again.');
+    return;
+  }
+
+  if(s.stage==='missing'){
+    // A monitored transfer that becomes missing is a single failed/cleared attempt.
+    stopComponentMonitor();
+    showComponentProblem('Setup could not finish. Connect to Wi-Fi and try again.');
+  }
 }
 
 window.onComponentVerified=function(requestId,mode,ok){
   componentVerifyInFlight[mode]=false;
-  if(ok!=='true')toast('A downloaded component could not be verified. Please download it again.');
-  setTimeout(()=>refreshComponentStatus(false,false),250);
+  if(ok==='true'){
+    // One final status check after verification; no toast/pop-up loop.
+    setTimeout(()=>{refreshComponentStatus(false);handleComponentFlow()},220);
+  }else{
+    stopComponentMonitor();
+    showComponentProblem('Setup could not finish. Please download the components again on Wi-Fi.');
+  }
 };
-window.onComponentVerificationError=function(requestId,mode,message){componentVerifyInFlight[mode]=false;toast('Component check could not finish. '+message);refreshComponentStatus(false,false)};
+window.onComponentVerificationError=function(requestId,mode,message){
+  componentVerifyInFlight[mode]=false;
+  stopComponentMonitor();
+  showComponentProblem('Setup could not finish. Please try again on Wi-Fi.');
+};
 
 function startupComponentCheck(){
-  showComponentGate('Checking components','Preparing the app for private offline planning…',5,false);
+  // Startup performs ONE initial check. It never asks for or downloads the optional
+  // detailed component. Only the lightweight core component is considered here.
+  requestedPlanMode='simple';
+  showComponentGate('Checking components','Preparing the app…',5,false);
   setTimeout(()=>{
-    refreshComponentStatus(false,true);
-    setTimeout(()=>{
-      const s=componentStatusCache.simple;
-      if(componentStatusCache.coreReady){showComponentGate('Components ready','Everything is ready.',100,false);setTimeout(hideComponentGate,450);return}
-      if(['downloading','pending','paused','needs_verification'].includes(s?.stage)){updateComponentGate();return}
-      if(componentStatusCache.wifi){startComponentDownload('simple','startup')}else showWifiRequired('Core components need Wi-Fi before the first business plan can be created. You can continue to the app now and finish setup later.');
-    },220);
-  },350);
+    refreshComponentStatus(false);
+    const s=componentStatusCache.simple||{};
+    if(componentStatusCache.coreReady){
+      showComponentGate('Components ready','Everything is ready.',100,false);
+      setTimeout(hideComponentGate,350);
+      return;
+    }
+    if(['downloading','pending','paused','needs_verification'].includes(s.stage)){
+      monitorComponent('simple','startup',false);
+      return;
+    }
+    if(componentStatusCache.wifi){
+      startComponentDownload('simple','startup',false);
+    }else{
+      showWifiRequired('Wi-Fi is needed for the first-time component download. You can continue to the app and finish setup later.');
+    }
+  },300);
 }
 
 function showComponentGate(title,text,percent=0,showActions=false){
   const gate=document.getElementById('componentGate');if(!gate)return;
   gate.classList.add('show');document.getElementById('componentGateTitle').textContent=title;document.getElementById('componentGateText').textContent=text;
-  document.getElementById('componentGateBar').style.width=percent+'%';document.getElementById('componentGatePct').textContent=percent+'%';
+  document.getElementById('componentGateBar').style.width=Math.max(0,Math.min(100,percent))+'%';document.getElementById('componentGatePct').textContent=Math.round(Math.max(0,Math.min(100,percent)))+'%';
   document.getElementById('componentGateActions').style.display=showActions?'grid':'none';
 }
 function hideComponentGate(){const g=document.getElementById('componentGate');if(g)g.classList.remove('show')}
 function showWifiRequired(message){
+  stopComponentMonitor();
   showComponentGate('Wi-Fi needed',message,0,true);
   document.getElementById('componentWifiBtn').style.display='block';
   document.getElementById('componentContinueBtn').style.display='block';
 }
-function openWifi(){try{Android.openWifiSettings()}catch(e){toast('Open Wi-Fi settings on your phone.')}}
-function continueWithoutComponents(){hideComponentGate();go('home')}
-function checkComponentsAgain(){showComponentGate('Checking components','Checking what is already available…',8,false);setTimeout(()=>refreshComponentStatus(false,true),250);setTimeout(()=>{if(!componentStatusCache.coreReady){if(componentStatusCache.wifi)startComponentDownload('simple','startup');else showWifiRequired('Wi-Fi is still unavailable. You can continue to the home screen and try again later.')}},700)}
-
-function updateComponentGate(){
-  const gate=document.getElementById('componentGate');if(!gate||!gate.classList.contains('show'))return;
-  let mode=requestedPlanMode==='detailed'?'detailed':'simple';
-  const s=componentStatusCache[mode]||{};
-  if(s.stage==='ready'&&componentStatusCache.knowledge?.ready){
-    showComponentGate('Components ready','Everything is ready.',100,false);
-    if(pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;setTimeout(()=>{hideComponentGate();startPlanGeneration(x.plan,x.mode)},400)}
-    else setTimeout(hideComponentGate,500);
-    return;
-  }
-  if(['downloading','pending','paused'].includes(s.stage)){
-    const pct=Math.max(1,s.percent||0);showComponentGate('Downloading components','Keep the app open while the download finishes. Wi-Fi only.',pct,false);return;
-  }
-  if(s.stage==='needs_verification'){showComponentGate('Checking components','Finishing setup…',99,false);return}
-  if(s.stage==='failed'){showWifiRequired('The component download did not finish. Connect to Wi-Fi and try again.');return}
+function showComponentProblem(message){
+  showComponentGate('Setup needs attention',message,0,true);
+  document.getElementById('componentWifiBtn').style.display='block';
+  document.getElementById('componentContinueBtn').style.display='block';
 }
+function openWifi(){try{Android.openWifiSettings()}catch(e){toast('Open Wi-Fi settings on your phone.')}}
+function continueWithoutComponents(){stopComponentMonitor();hideComponentGate();go('home')}
 
-function startComponentDownload(mode,reason='manual'){
+function startComponentDownload(mode,reason='manual',forPlan=false){
   requestedPlanMode=mode;
   if(!hasAndroid()){toast('Component downloads are available in the installed Android app.');return}
-  if(!componentStatusCache.wifi){showWifiRequired(mode==='detailed'?'Detailed planning needs an additional Wi-Fi download. You can continue with the simple plan instead.':'Wi-Fi is needed to download the required components.');return}
-  showComponentGate('Downloading components',mode==='detailed'?'Preparing detailed planning. Wi-Fi only.':'Preparing private offline planning. Wi-Fi only.',1,false);
+  refreshComponentStatus(false);
+  const s=componentStatusCache[mode]||{};
+
+  if(s.stage==='ready'&&componentStatusCache.knowledge?.ready){
+    hideComponentGate();
+    if(forPlan&&pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;startPlanGeneration(x.plan,x.mode)}
+    return;
+  }
+
+  // If a transfer is already underway, just attach the UI to it. Never restart it.
+  if(['downloading','pending','paused','needs_verification'].includes(s.stage)){
+    monitorComponent(mode,reason,forPlan);return;
+  }
+
+  if(!componentStatusCache.wifi){
+    showWifiRequired(mode==='detailed'?'Detailed planning needs an additional Wi-Fi download. You can continue with Simple Plan instead.':'Wi-Fi is needed to download the required components.');return;
+  }
+
+  showComponentGate('Downloading components',mode==='detailed'?'Preparing detailed planning. Wi-Fi only.':'Preparing the app. Wi-Fi only.',1,false);
   try{
     const r=parseJsonSafe(Android.startComponentDownload(mode),{ok:false});
-    if(!r.ok){if(r.needsWifi)showWifiRequired('Wi-Fi is required for this download.');else{hideComponentGate();toast(r.message||'Could not start component download.')}}
-    else{refreshComponentStatus(false,false);if(!componentPoll)componentPoll=setInterval(()=>refreshComponentStatus(false,false),1600)}
-  }catch(e){hideComponentGate();toast('Could not start component download: '+e.message)}
+    if(!r.ok){
+      if(r.needsWifi)showWifiRequired('Wi-Fi is required for this download.');
+      else showComponentProblem('The download could not be started. Please try again.');
+      return;
+    }
+    monitorComponent(mode,reason,forPlan);
+  }catch(e){showComponentProblem('The download could not be started. Please try again.')}
 }
 
 function ensureComponentsForMode(mode,forPlan=false){
-  requestedPlanMode=mode;refreshComponentStatus(false,false);
-  const s=mode==='detailed'?componentStatusCache.detailed:componentStatusCache.simple;
-  if(s?.stage==='ready'&&componentStatusCache.knowledge?.ready){hideComponentGate();if(forPlan&&pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;startPlanGeneration(x.plan,x.mode)};return}
-  if(componentStatusCache.wifi)startComponentDownload(mode,forPlan?'plan':'manual');
-  else showWifiRequired(mode==='detailed'?'Detailed planning requires an additional Wi-Fi download. You can switch to Simple Plan or continue to the app.':'Wi-Fi is needed to finish the required component download. You can continue to the app and try again later.');
+  requestedPlanMode=mode;
+  refreshComponentStatus(false);
+  const s=componentStatusCache[mode]||{};
+  if(s.stage==='ready'&&componentStatusCache.knowledge?.ready){
+    hideComponentGate();
+    if(forPlan&&pendingPlanAfterComponents){const x=pendingPlanAfterComponents;pendingPlanAfterComponents=null;startPlanGeneration(x.plan,x.mode)}
+    return;
+  }
+  if(['downloading','pending','paused','needs_verification'].includes(s.stage)){
+    monitorComponent(mode,forPlan?'plan':'manual',forPlan);return;
+  }
+  if(componentStatusCache.wifi)startComponentDownload(mode,forPlan?'plan':'manual',forPlan);
+  else showWifiRequired(mode==='detailed'?'Detailed planning requires an additional Wi-Fi download. You can use Simple Plan now or try Detailed Plan later on Wi-Fi.':'Wi-Fi is needed to finish the required component download. You can continue to the app and try again later.');
 }
-function settingsDownloadComponents(){requestedPlanMode='simple';ensureComponentsForMode('simple',false)}
-function settingsCheckComponents(){showComponentGate('Checking components','Checking what is already available…',8,false);setTimeout(()=>{refreshComponentStatus(true,false);setTimeout(hideComponentGate,650)},250)}
+
+function settingsDownloadComponents(){ensureComponentsForMode('simple',false)}
+function settingsDownloadDetailed(){ensureComponentsForMode('detailed',false)}
+function settingsCheckComponents(){
+  showComponentGate('Checking components','Checking what is already available…',8,false);
+  setTimeout(()=>{
+    refreshComponentStatus(false);
+    const core=componentStatusCache.coreReady;
+    showComponentGate(core?'Components ready':'Check complete',core?'Core components are ready.':'Some components are not installed yet.',core?100:35,false);
+    setTimeout(hideComponentGate,700);
+  },260);
+}
 function loadKnowledge(){
   let data=null;
   if(hasAndroid()&&typeof Android.getKnowledgeJson==='function'){
@@ -553,6 +657,5 @@ renderTips();
 loadKnowledge();
 updateModeUi();
 updateSettings();
-refreshComponentStatus(false,false);
 refreshCreateComponentStatus();
 setTimeout(startupComponentCheck,250);
